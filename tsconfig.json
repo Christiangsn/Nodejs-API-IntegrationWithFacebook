@@ -9,8 +9,10 @@
     "forceConsistentCasingInFileNames": true, // Checkagem de importações para suporte a todas as plataformas - TARGETS
     "moduleResolution": "node", // Importar arquivos de uma pasta ou arquivo diretamente - MODULOS
     "module": "commonjs", // Transformar importações de import para Require para o node entender - MODULOS
+    "baseUrl": "./src",
     "paths":{
-        "@/main": ["/main"]
+        "@main/*": ["main/*"],
+        "@domain/*": ["domain/*"]
     },
     // "strictNullChecks": true,  // Habilita warning de possiveis erros com parametros nulos ou undefined em funções e classes - TIPAGEM
     // "strictFunctionTypes": true, // Habilitar warning de contratos de interfaces com funções ou classes - TIPAGEM
