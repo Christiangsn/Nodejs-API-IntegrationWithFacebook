@@ -16,9 +16,8 @@
     // "strictFunctionTypes": true, // Habilitar warning de contratos de interfaces com funções ou classes - TIPAGEM
     // "strictPropertyInitialization": true, // Obrigar inicializar todas as variaveis de uma classe
     // "noImplicitAny": true  // Impedir que qualquer varíavel seja any
-    "strict": true, // Atalho para abrir propriedades do TS de todos
+    "strict": true // Atalho para abrir propriedades do TS de todos
   },
-  "include": ["src", "tests"],
+  "include": ["src"],
   "exclude": ["node_modules"]
-
 }
