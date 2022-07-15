@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es2021", // Versão de Compilação do NODE - TARGETS
+    "outDir": "dist",  // Pasta para gerar a Build - TARGETS
+    "rootDir": "./src",  // Diretorio de onde estarão os arquivos TS - TARGETS
+    "skipLibCheck": true,
+    "sourceMap": true,   // Configurações de DEBUG e Depurar Arquivos - TARGETS
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true, // Checkagem de importações para suporte a todas as plataformas - TARGETS
+    "moduleResolution": "node", // Importar arquivos de uma pasta ou arquivo diretamente - MODULOS
+    "module": "commonjs", // Transformar importações de import para Require para o node entender - MODULOS
+    "paths":{
+        "@/main": ["/main"]
+    },
+    // "strictNullChecks": true,  // Habilita warning de possiveis erros com parametros nulos ou undefined em funções e classes - TIPAGEM
+    // "strictFunctionTypes": true, // Habilitar warning de contratos de interfaces com funções ou classes - TIPAGEM
+    // "strictPropertyInitialization": true, // Obrigar inicializar todas as variaveis de uma classe
+    // "noImplicitAny": true  // Impedir que qualquer varíavel seja any
+    "strict": true, // Atalho para abrir propriedades do TS de todos
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+
+}
