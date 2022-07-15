@@ -10,8 +10,8 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:watch": "npm test -- --watch",
+    "test:staged": "npm test -- --findRelatedTests",
     "test:coverage": "npm test -- --coverage"
-
   },
   "repository": {
     "type": "git",
@@ -42,6 +42,7 @@
     "node": "16.x"
   },
   "dependencies": {
+    "lint-staged": "^13.0.3",
     "module-alias": "^2.2.2",
     "rimraf": "^3.0.2"
   }
