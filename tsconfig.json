@@ -20,6 +20,6 @@
     // "noImplicitAny": true  // Impedir que qualquer varíavel seja any
     "strict": true // Atalho para abrir propriedades do TS de todos
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "exclude": ["node_modules"]
 }

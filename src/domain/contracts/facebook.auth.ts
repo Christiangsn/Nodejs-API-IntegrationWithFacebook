@@ -2,7 +2,7 @@ import { TAuthenticationError } from '@domain/errors'
 import { TAcessToken } from '@domain/models'
 
 // Evitar colisão de nomes (interface) ao implementar o metodo
-namespace IFacebookAuth {
+export namespace IFacebookAuth {
   export type Params = {
     token: string
   }
