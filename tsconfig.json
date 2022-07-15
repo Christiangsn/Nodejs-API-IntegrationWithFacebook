@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2021",     // Versão de Compilação do NODE
+    "outDir": "dist",      // Pasta para gerar a Build
+    "rootDir": "./src",    // Diretorio de onde estarão os arquivos TS
+    "skipLibCheck": true,
+    "sourceMap": true,   // Configurações de DEBUG e Depurar Arquivos
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true, // Checkagem de importações para suporte a todas as plataformas
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+
+}
