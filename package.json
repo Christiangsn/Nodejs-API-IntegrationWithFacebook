@@ -11,7 +11,8 @@
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:watch": "npm test -- --watch",
     "test:staged": "npm test -- --findRelatedTests",
-    "test:coverage": "npm test -- --coverage"
+    "test:coverage": "npm test -- --coverage",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
+    "husky": "^8.0.1",
     "jest": "^28.1.3",
     "ts-jest": "^28.0.6",
     "typescript": "^4.7.4"
