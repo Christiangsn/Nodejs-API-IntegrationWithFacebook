@@ -1,4 +1,4 @@
-import { TAuthenticationError } from '@domain/errors'
+import { TAuthenticationError } from '@domain/error'
 import { TAcessToken } from '@domain/models'
 
 // Evitar colisão de nomes (interface) ao implementar o metodo
