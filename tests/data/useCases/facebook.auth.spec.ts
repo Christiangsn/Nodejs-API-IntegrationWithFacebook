@@ -25,13 +25,14 @@ describe('FacebookAuthenticationUseCase', () => {
       email: 'any_facebook_email',
       facebookId: 'any_facebook_id'
     })
+
     userAccountRepository = mock()
-    cryptography = mock()
-    cryptography.generation.mockResolvedValue('ANY_TOKEN_0001')
     userAccountRepository.check.mockResolvedValue(undefined)
-    userAccountRepository.saveWithFacebook.mockResolvedValueOnce({
+    userAccountRepository.saveWithFacebook.mockResolvedValue({
       id: '001_ID_ACCOUNT'
     })
+    cryptography = mock()
+    cryptography.generation.mockResolvedValue('ANY_TOKEN_0001')
     sut = new FacebookAuthenticationUseCases(facebookAPI, userAccountRepository, cryptography)
   })
 
@@ -85,5 +86,35 @@ describe('FacebookAuthenticationUseCase', () => {
     const authResult = await sut.execute({ token })
 
     expect(authResult).toEqual(new AccessToken('ANY_TOKEN_0001'))
+  })
+
+  it('Should rethrow if ILoadFacebookUserAPI throws', async () => {
+    facebookAPI.generation.mockRejectedValueOnce(new Error('Facebook Error'))
+    const promise = sut.execute({ token })
+
+    await expect(promise).rejects.toThrow(new Error('Facebook Error'))
+  })
+
+  it('Should rethrow if ILoudUserAccountRepository throws', async () => {
+    userAccountRepository.check.mockRejectedValueOnce(new Error('Error in search user'))
+    const promise = sut.execute({ token })
+
+    await expect(promise).rejects.toThrow(new Error('Error in search user'))
+  })
+
+  it('Should rethrow if ISaveFacebookAccountRepository throws', async () => {
+    userAccountRepository.saveWithFacebook.mockRejectedValue(new Error('Failed in save user'))
+
+    const promise = sut.execute({ token })
+
+    await expect(promise).rejects.toThrow(new Error('Failed in save user'))
+  })
+
+  it('Should rethrow if ITokenGeneration throws', async () => {
+    cryptography.generation.mockRejectedValue(new Error('Failed in generation token'))
+
+    const promise = sut.execute({ token })
+
+    await expect(promise).rejects.toThrow(new Error('Failed in generation token'))
   })
 })
