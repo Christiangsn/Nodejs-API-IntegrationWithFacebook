@@ -1,2 +1,2 @@
-export * from './acess.token'
+export * from './acess.token.model'
 export * from './facebook.model'
