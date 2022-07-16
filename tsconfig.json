@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2021", // Versão de Compilação do NODE - TARGETS
     "outDir": "dist",  // Pasta para gerar a Build - TARGETS
-    "rootDir": "./src",  // Diretorio de onde estarão os arquivos TS - TARGETS
+    "rootDir": "src",  // Diretorio de onde estarão os arquivos TS - TARGETS
     "skipLibCheck": true,
     "sourceMap": true,   // Configurações de DEBUG e Depurar Arquivos - TARGETS
     "esModuleInterop": true,

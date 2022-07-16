@@ -1,17 +1,6 @@
 import { ILoadFacebookUserAPI } from '@data/contracts/facebook'
-import { IFacebookAuth } from '@domain/contracts'
+import { FacebookAuthenticationUseCases } from '@data/useCases/facebook'
 // import { TAuthenticationError } from '@domain/error'
-
-class FacebookAuthenticationUseCases {
-  constructor (
-    private readonly loadFacebookUseByTokenAPI: ILoadFacebookUserAPI
-  ) {}
-
-  public async execute ({ token }: IFacebookAuth.Params): Promise<Error> {
-    await this.loadFacebookUseByTokenAPI.generation({ token })
-    return new Error()
-  }
-}
 
 class LoadFacebookUserAPISpy implements ILoadFacebookUserAPI {
   public token?: string
