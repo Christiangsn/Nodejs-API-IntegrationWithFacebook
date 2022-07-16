@@ -6,16 +6,15 @@ import { TAuthenticationError } from '@domain/error'
 export class FacebookAuthenticationUseCases implements IFacebookAuth {
   constructor (
     private readonly loadFacebookUseByTokenAPI: ILoadFacebookUserAPI,
-    private readonly loadUserAccountRepository: ILoudUserAccountRepository,
-    private readonly createFacebookAccountRepository: ICreateFacebookAccountRepository
+    private readonly userAccountRepository: ILoudUserAccountRepository & ICreateFacebookAccountRepository
   ) {}
 
   public async execute ({ token }: IFacebookAuth.Params): Promise<TAuthenticationError> {
     const facebookDB = await this.loadFacebookUseByTokenAPI.generation({ token })
 
     if (facebookDB !== undefined) {
-      await this.loadUserAccountRepository.check({ email: facebookDB.email })
-      await this.createFacebookAccountRepository.createFromFacebook(facebookDB)
+      await this.userAccountRepository.check({ email: facebookDB.email })
+      await this.userAccountRepository.createFromFacebook(facebookDB)
     }
 
     return new TAuthenticationError()
