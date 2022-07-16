@@ -6,6 +6,7 @@ import { FacebookAuthenticationUseCases } from '@data/useCases/facebook'
 import { TAuthenticationError } from '@domain/error'
 
 import { mock, MockProxy } from 'jest-mock-extended'
+import { AccessToken } from '@domain/models'
 
 jest.mock('@domain/models/facebook.model')
 
@@ -72,7 +73,8 @@ describe('FacebookAuthenticationUseCase', () => {
     await sut.execute({ token })
 
     expect(cryptography.generation).toHaveBeenCalledWith({
-      key: '001_ID_ACCOUNT'
+      key: '001_ID_ACCOUNT',
+      expirationInMs: AccessToken.expirationInMs
     })
 
     expect(cryptography.generation).toHaveBeenCalledTimes(1)

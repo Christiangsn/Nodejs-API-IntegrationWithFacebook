@@ -1,4 +1,4 @@
-export class AcessToken {
+export class AccessToken {
   constructor (
     private readonly value: string
   ) {}

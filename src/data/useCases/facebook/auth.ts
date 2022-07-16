@@ -1,9 +1,10 @@
+import { AccessToken, FacebookAccount } from '@domain/models'
+
 import { ILoadFacebookUserAPI } from '@data/contracts/facebook'
 import { ITokenGeneration } from '@data/contracts/crypto'
 import { ILoudUserAccountRepository, ISaveFacebookAccountRepository } from '@data/contracts/repositories'
 import { IFacebookAuth } from '@domain/contracts'
 import { TAuthenticationError } from '@domain/error'
-import { FacebookAccount } from '@domain/models'
 
 export class FacebookAuthenticationUseCases implements IFacebookAuth {
   constructor (
@@ -30,7 +31,8 @@ export class FacebookAuthenticationUseCases implements IFacebookAuth {
 
       // Gerar o token de autenticação
       await this.cryptography.generation({
-        key: id
+        key: id,
+        expirationInMs: AccessToken.expirationInMs
       })
     }
 
