@@ -1,5 +1,5 @@
 export interface ITokenGeneration {
-  generation: ({ key, expirationInMs }: ITokenGeneration.Params) => Promise<void>
+  generation: ({ key, expirationInMs }: ITokenGeneration.Params) => Promise<ITokenGeneration.Return>
 }
 
 export namespace ITokenGeneration {
@@ -7,4 +7,6 @@ export namespace ITokenGeneration {
     key: string
     expirationInMs: number
   }
+
+  export type Return = string
 }

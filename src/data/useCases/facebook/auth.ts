@@ -13,7 +13,7 @@ export class FacebookAuthenticationUseCases implements IFacebookAuth {
     private readonly cryptography: ITokenGeneration
   ) {}
 
-  public async execute ({ token }: IFacebookAuth.Params): Promise<TAuthenticationError> {
+  public async execute ({ token }: IFacebookAuth.Params): Promise<IFacebookAuth.Return> {
     // Verificar se existe o token desta conta..
     const facebookDB = await this.loadFacebookUseByTokenAPI.generation({ token })
 
@@ -30,10 +30,12 @@ export class FacebookAuthenticationUseCases implements IFacebookAuth {
       const { id } = await this.userAccountRepository.saveWithFacebook(userAccount)
 
       // Gerar o token de autenticação
-      await this.cryptography.generation({
+      const token = await this.cryptography.generation({
         key: id,
         expirationInMs: AccessToken.expirationInMs
       })
+
+      return new AccessToken(token)
     }
 
     // Se não existir uma conta do token do facebook

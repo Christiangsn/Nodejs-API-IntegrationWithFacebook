@@ -27,6 +27,7 @@ describe('FacebookAuthenticationUseCase', () => {
     })
     userAccountRepository = mock()
     cryptography = mock()
+    cryptography.generation.mockResolvedValue('ANY_TOKEN_0001')
     userAccountRepository.check.mockResolvedValue(undefined)
     userAccountRepository.saveWithFacebook.mockResolvedValueOnce({
       id: '001_ID_ACCOUNT'
@@ -78,5 +79,11 @@ describe('FacebookAuthenticationUseCase', () => {
     })
 
     expect(cryptography.generation).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should return an AccessTOken on sucess', async () => {
+    const authResult = await sut.execute({ token })
+
+    expect(authResult).toEqual(new AccessToken('ANY_TOKEN_0001'))
   })
 })
