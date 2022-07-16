@@ -1,3 +1,4 @@
+import { ILoadFacebookUserAPI } from '@data/contracts/facebook'
 import { IFacebookAuth } from '@domain/contracts'
 // import { TAuthenticationError } from '@domain/error'
 
@@ -10,18 +11,6 @@ class FacebookAuthenticationUseCases {
     await this.loadFacebookUseByTokenAPI.generation({ token })
     return new Error()
   }
-}
-
-interface ILoadFacebookUserAPI {
-  generation: ({ token }: ILoadFacebookUserAPI.Params) => Promise<ILoadFacebookUserAPI.Return>
-}
-
-namespace ILoadFacebookUserAPI {
-  export type Params = {
-    token: string
-  }
-
-  export type Return = undefined
 }
 
 class LoadFacebookUserAPISpy implements ILoadFacebookUserAPI {
