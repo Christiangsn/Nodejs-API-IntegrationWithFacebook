@@ -18,12 +18,12 @@ export class FacebookAuthenticationUseCases implements IFacebookAuth {
       const accountData = await this.userAccountRepository.check({ email: facebookDB.email })
 
       // Se existir uma conta com um nome ai atualiza os dados com o nome
-      if (accountData?.name !== undefined) {
+      if (accountData !== undefined) {
         // Atualizar os dados...
         await this.userAccountRepository.updatedWithFacebookData({
           id: accountData.id,
           facebookId: facebookDB.facebookId,
-          name: accountData.name
+          name: accountData.name ?? facebookDB.name // Se existir um nome, registrar o nome, caso contrário envia o nome do facebook
         })
       } else {
         await this.userAccountRepository.createFromFacebook(facebookDB)

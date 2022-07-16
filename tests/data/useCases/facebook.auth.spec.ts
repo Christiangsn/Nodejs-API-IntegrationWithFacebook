@@ -20,6 +20,7 @@ describe('FacebookAuthenticationUseCase', () => {
       facebookId: 'any_facebook_id'
     })
     userAccountRepository = mock()
+    userAccountRepository.check.mockResolvedValue(undefined)
     sut = new FacebookAuthenticationUseCases(facebookAPI, userAccountRepository)
   })
 
@@ -46,7 +47,6 @@ describe('FacebookAuthenticationUseCase', () => {
   })
 
   it('Should call CreateFacebookUserAccountRepository when LoudAccountRepository returns undefined', async () => {
-    userAccountRepository.check.mockResolvedValueOnce(undefined)
     await sut.execute({ token })
 
     expect(userAccountRepository.createFromFacebook).toHaveBeenCalledWith({
@@ -67,6 +67,20 @@ describe('FacebookAuthenticationUseCase', () => {
     expect(userAccountRepository.updatedWithFacebookData).toHaveBeenCalledWith({
       id: 'any_id',
       name: 'any_name',
+      facebookId: 'any_facebook_id'
+    })
+    expect(userAccountRepository.updatedWithFacebookData).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should updated account name', async () => {
+    userAccountRepository.check.mockResolvedValueOnce({
+      id: 'any_id'
+    })
+    await sut.execute({ token })
+
+    expect(userAccountRepository.updatedWithFacebookData).toHaveBeenCalledWith({
+      id: 'any_id',
+      name: 'any_facebook_name',
       facebookId: 'any_facebook_id'
     })
     expect(userAccountRepository.updatedWithFacebookData).toHaveBeenCalledTimes(1)
