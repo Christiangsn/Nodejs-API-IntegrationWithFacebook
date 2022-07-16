@@ -1,14 +1,21 @@
-import { ILoadFacebookUserAPI } from '@data/contracts'
+import { ILoadFacebookUserAPI } from '@data/contracts/facebook'
+import { ILoudUserAccountRepository } from '@data/contracts/repositories'
 import { IFacebookAuth } from '@domain/contracts'
 import { TAuthenticationError } from '@domain/error'
 
 export class FacebookAuthenticationUseCases implements IFacebookAuth {
   constructor (
-    private readonly loadFacebookUseByTokenAPI: ILoadFacebookUserAPI
+    private readonly loadFacebookUseByTokenAPI: ILoadFacebookUserAPI,
+    private readonly loadUserAccountRepository: ILoudUserAccountRepository
   ) {}
 
   public async execute ({ token }: IFacebookAuth.Params): Promise<TAuthenticationError> {
-    await this.loadFacebookUseByTokenAPI.generation({ token })
+    const facebookDB = await this.loadFacebookUseByTokenAPI.generation({ token })
+
+    if (facebookDB !== undefined) {
+      await this.loadUserAccountRepository.check({ email: facebookDB.email })
+    }
+
     return new TAuthenticationError()
   }
 }

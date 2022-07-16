@@ -7,5 +7,9 @@ export namespace ILoadFacebookUserAPI {
     token: string
   }
 
-  export type Return = undefined
+  export type Return = undefined | {
+    name: string
+    facebookId: string
+    email: string
+  }
 }
