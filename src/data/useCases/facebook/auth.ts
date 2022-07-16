@@ -1,4 +1,5 @@
 import { ILoadFacebookUserAPI } from '@data/contracts/facebook'
+import { ITokenGeneration } from '@data/contracts/crypto'
 import { ILoudUserAccountRepository, ISaveFacebookAccountRepository } from '@data/contracts/repositories'
 import { IFacebookAuth } from '@domain/contracts'
 import { TAuthenticationError } from '@domain/error'
@@ -7,7 +8,8 @@ import { FacebookAccount } from '@domain/models'
 export class FacebookAuthenticationUseCases implements IFacebookAuth {
   constructor (
     private readonly loadFacebookUseByTokenAPI: ILoadFacebookUserAPI,
-    private readonly userAccountRepository: ILoudUserAccountRepository & ISaveFacebookAccountRepository
+    private readonly userAccountRepository: ILoudUserAccountRepository & ISaveFacebookAccountRepository,
+    private readonly cryptography: ITokenGeneration
   ) {}
 
   public async execute ({ token }: IFacebookAuth.Params): Promise<TAuthenticationError> {
@@ -24,7 +26,12 @@ export class FacebookAuthenticationUseCases implements IFacebookAuth {
       const userAccount = new FacebookAccount(facebookDB, accountData)
 
       // Repassar o objeto completo para a infra salvar ou atualizar...
-      await this.userAccountRepository.saveWithFacebook(userAccount)
+      const { id } = await this.userAccountRepository.saveWithFacebook(userAccount)
+
+      // Gerar o token de autenticação
+      await this.cryptography.generation({
+        key: id
+      })
     }
 
     // Se não existir uma conta do token do facebook
