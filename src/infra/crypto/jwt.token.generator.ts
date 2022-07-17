@@ -2,7 +2,7 @@ import { ITokenGeneration } from '@data/contracts/crypto'
 
 import { sign } from 'jsonwebtoken'
 
-export class JwtTokenGenerator {
+export class JwtTokenGenerator implements ITokenGeneration {
   constructor (
     private readonly secret: string
   ) { }
