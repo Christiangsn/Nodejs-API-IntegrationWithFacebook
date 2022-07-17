@@ -13,7 +13,8 @@
     "paths":{
         "@main/*": ["main/*"],
         "@domain/*": ["domain/*"],
-        "@data/*": ["data/*"]
+        "@data/*": ["data/*"],
+        "@infra/*": ["infra/*"]
     },
     // "strictNullChecks": true,  // Habilita warning de possiveis erros com parametros nulos ou undefined em funções e classes - TIPAGEM
     // "strictFunctionTypes": true, // Habilitar warning de contratos de interfaces com funções ou classes - TIPAGEM
