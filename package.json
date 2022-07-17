@@ -28,6 +28,7 @@
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/jest": "^28.1.5",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/module-alias": "^2.0.1",
     "@types/node": "^18.0.4",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -47,6 +48,7 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
+    "jsonwebtoken": "^8.5.1",
     "lint-staged": "^13.0.3",
     "module-alias": "^2.2.2",
     "rimraf": "^3.0.2"

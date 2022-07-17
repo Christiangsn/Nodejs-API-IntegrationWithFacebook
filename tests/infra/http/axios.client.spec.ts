@@ -23,6 +23,7 @@ describe('AxiosHttpClient', () => {
   })
 
   beforeEach(() => {
+    jest.clearAllMocks()
     sut = new AxiosHttpClient()
   })
 
