@@ -16,6 +16,10 @@ describe('FacebookAPI', () => {
   })
 
   beforeEach(() => {
+    jest.clearAllMocks()
+    httpClient.get.mockResolvedValueOnce({
+      access_token: 'any_app_token'
+    })
     sut = new FacebookAPI(httpClient, clientID, clientSecret)
   })
 
@@ -28,6 +32,18 @@ describe('FacebookAPI', () => {
         client_id: clientID,
         client_secret: clientSecret,
         grand_type: 'client_credentials'
+      }
+    })
+  })
+
+  it('Should get debug token', async () => {
+    await sut.generation({ token: 'any_client_token' })
+
+    expect(httpClient.get).toHaveBeenCalledWith({
+      url: 'https://graph.facebook.com/debug_token',
+      params: {
+        access_token: 'any_app_token',
+        input_token: 'any_client_token'
       }
     })
   })

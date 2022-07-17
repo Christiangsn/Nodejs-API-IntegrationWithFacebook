@@ -1,14 +1,12 @@
 export interface IHttpGetClient {
-  get: (params: IHttpGetClient.Params) => Promise<void>
+  get: (params: IHttpGetClient.Params) => Promise<IHttpGetClient.Return>
 }
 
 export namespace IHttpGetClient {
   export type Params = {
     url: string
-    params: {
-      client_id: string
-      client_secret: string
-      grand_type: string
-    }
+    params: Object
   }
+
+  export type Return = any
 }

@@ -11,12 +11,20 @@ export class FacebookAPI {
   ) {}
 
   async generation ({ token }: ILoadFacebookUserAPI.Params): Promise<void> {
-    await this.httpClient.get({
+    const appToken = await this.httpClient.get({
       url: `${this.baseURL}/oauth/access_token`,
       params: {
         client_id: this.clientID,
         client_secret: this.clientSecret,
         grand_type: 'client_credentials'
+      }
+    })
+
+    await this.httpClient.get({
+      url: `${this.baseURL}/debug_token`,
+      params: {
+        access_token: appToken.access_token,
+        input_token: token
       }
     })
   }
