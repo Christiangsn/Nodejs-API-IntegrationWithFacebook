@@ -1,5 +1,5 @@
 import { ILoadFacebookUserAPI } from '@data/contracts/facebook'
-import { mock } from 'jest-mock-extended'
+import { mock, MockProxy } from 'jest-mock-extended'
 
 class FacebookAPI {
   private readonly baseURL = 'https://graph.facebook.com'
@@ -38,13 +38,22 @@ namespace IHttpGetClient {
 }
 
 describe('FacebookAPI', () => {
-  const clientID = 'any_client_id'
-  const clientSecret = 'any_client_secret'
+  let clientID: string
+  let clientSecret: string
+  let sut: FacebookAPI
+  let httpClient: MockProxy<IHttpGetClient>
+
+  beforeAll(() => {
+    clientID = 'any_client_id'
+    clientSecret = 'any_client_secret'
+    httpClient = mock<IHttpGetClient>()
+  })
+
+  beforeEach(() => {
+    sut = new FacebookAPI(httpClient, clientID, clientSecret)
+  })
 
   it('Should get app token', async () => {
-    const httpClient = mock<IHttpGetClient>()
-    const sut = new FacebookAPI(httpClient, clientID, clientSecret)
-
     await sut.generation({ token: 'any_client_token' })
 
     expect(httpClient.get).toHaveBeenCalledWith({
