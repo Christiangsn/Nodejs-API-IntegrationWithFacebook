@@ -1,5 +1,5 @@
 export interface IHttpGetClient {
-  get: (params: IHttpGetClient.Params) => Promise<IHttpGetClient.Return>
+  get: <T = any> (params: IHttpGetClient.Params) => Promise<T>
 }
 
 export namespace IHttpGetClient {
@@ -8,5 +8,4 @@ export namespace IHttpGetClient {
     params: Object
   }
 
-  export type Return = any
 }
