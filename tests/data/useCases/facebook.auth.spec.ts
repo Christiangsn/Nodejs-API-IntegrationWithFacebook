@@ -18,7 +18,7 @@ describe('FacebookAuthenticationUseCase', () => {
 
   const token = 'any_token'
 
-  beforeEach(() => {
+  beforeAll(() => {
     facebookAPI = mock()
     facebookAPI.generation.mockResolvedValue({
       name: 'any_facebook_name',
@@ -33,6 +33,11 @@ describe('FacebookAuthenticationUseCase', () => {
     })
     cryptography = mock()
     cryptography.generation.mockResolvedValue('ANY_TOKEN_0001')
+  })
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+
     sut = new FacebookAuthenticationUseCases(facebookAPI, userAccountRepository, cryptography)
   })
 
@@ -103,7 +108,7 @@ describe('FacebookAuthenticationUseCase', () => {
   })
 
   it('Should rethrow if ISaveFacebookAccountRepository throws', async () => {
-    userAccountRepository.saveWithFacebook.mockRejectedValue(new Error('Failed in save user'))
+    userAccountRepository.saveWithFacebook.mockRejectedValueOnce(new Error('Failed in save user'))
 
     const promise = sut.execute({ token })
 
@@ -111,8 +116,7 @@ describe('FacebookAuthenticationUseCase', () => {
   })
 
   it('Should rethrow if ITokenGeneration throws', async () => {
-    cryptography.generation.mockRejectedValue(new Error('Failed in generation token'))
-
+    cryptography.generation.mockRejectedValueOnce(new Error('Failed in generation token'))
     const promise = sut.execute({ token })
 
     await expect(promise).rejects.toThrow(new Error('Failed in generation token'))
