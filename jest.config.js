@@ -1,6 +1,10 @@
 module.exports = {
   collectCoverage: false, // Qualquer teste gera um coverage
-  collectCoverageFrom: ['<rootDir>/src/**/*.ts'], // Definir a partir de qual pasta gerar os testes
+  collectCoverageFrom: [
+    '<rootDir>/src/**/*.ts',
+    '!<rootDir>/src/main/**',
+    '!<rootDir>/src/**/index.ts'
+  ], // Definir a partir de qual pasta gerar os testes
   coverageDirectory: 'coverage', // Gerar pasta separada de coverages
   coverageProvider: 'babel',
   moduleNameMapper: {
