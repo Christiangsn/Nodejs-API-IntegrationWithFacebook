@@ -8,11 +8,13 @@ class JwtTokenGenerator {
     private readonly secret: string
   ) { }
 
-  public async generation ({ key, expirationInMs }: ITokenGeneration.Params): Promise<void> {
+  public async generation ({ key, expirationInMs }: ITokenGeneration.Params): Promise<ITokenGeneration.Return> {
     const expirationInSeconds = expirationInMs / 1000
-    jwt.sign({
+    const generationToken = jwt.sign({
       key
     }, this.secret, { expiresIn: expirationInSeconds })
+
+    return generationToken
   }
 }
 
@@ -22,6 +24,7 @@ describe('JwtTokenGenerator', () => {
 
   beforeAll(() => {
     fakeJwt = jwt as jest.Mocked<typeof jwt>
+    fakeJwt.sign.mockImplementation(() => 'any_token')
   })
 
   beforeEach(() => {
@@ -31,5 +34,10 @@ describe('JwtTokenGenerator', () => {
   it('Should call sign with correct params', async () => {
     await sut.generation({ key: 'any_key', expirationInMs: 1000 })
     expect(fakeJwt.sign).toHaveBeenCalledWith({ key: 'any_key' }, 'any_secret', { expiresIn: 1 })
+  })
+
+  it('Should return a token', async () => {
+    const token = await sut.generation({ key: 'any_key', expirationInMs: 1000 })
+    expect(token).toBe('any_token')
   })
 })
