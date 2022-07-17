@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { IHttpGetClient } from '@infra/http'
 import { ILoadFacebookUserAPI } from '@data/contracts/facebook'
 
@@ -20,11 +21,19 @@ export class FacebookAPI {
       }
     })
 
-    await this.httpClient.get({
+    const debugToken = await this.httpClient.get({
       url: `${this.baseURL}/debug_token`,
       params: {
         access_token: appToken.access_token,
         input_token: token
+      }
+    })
+
+    await this.httpClient.get({
+      url: `${this.baseURL}/${debugToken.data.user_id}`,
+      params: {
+        fields: ['id', 'name', 'email'].join(','),
+        access_token: token
       }
     })
   }
