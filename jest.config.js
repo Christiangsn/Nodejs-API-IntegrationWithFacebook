@@ -25,5 +25,6 @@ module.exports = {
   ], // Onde fica o diretorio de testes
   transform: {
     '\\.ts$': 'ts-jest'
-  }
+  },
+  clearAllMocks: true
 }
