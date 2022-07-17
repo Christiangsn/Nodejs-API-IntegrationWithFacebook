@@ -40,4 +40,12 @@ describe('JwtTokenGenerator', () => {
     const token = await sut.generation({ key: 'any_key', expirationInMs: 1000 })
     expect(token).toBe('any_token')
   })
+
+  it('Should rethrow  if JWT Sign throws', async () => {
+    fakeJwt.sign.mockImplementation(() => { throw new Error('Error in Generation Token') })
+
+    const promise = sut.generation({ key: 'any_key', expirationInMs: 1000 })
+
+    await expect(promise).rejects.toThrow(new Error('Error in Generation Token'))
+  })
 })
