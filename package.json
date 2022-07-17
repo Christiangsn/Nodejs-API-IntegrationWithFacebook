@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/Christiangsn/Nodejs-API-IntegrationWithFacebook#readme",
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/jest": "^28.1.5",
     "@types/module-alias": "^2.0.1",
     "@types/node": "^18.0.4",
@@ -45,6 +46,7 @@
     "node": "16.x"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "lint-staged": "^13.0.3",
     "module-alias": "^2.2.2",
     "rimraf": "^3.0.2"
