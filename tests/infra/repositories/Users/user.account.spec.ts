@@ -1,7 +1,7 @@
 import { ILoudUserAccountRepository } from '@data/contracts/repositories/user.account'
 
-import { newDb } from 'pg-mem'
-import { Entity, PrimaryGeneratedColumn, Column, Connection, getRepository } from 'typeorm'
+import { IBackup, newDb } from 'pg-mem'
+import { Entity, PrimaryGeneratedColumn, Column, Connection, getRepository, Repository, getConnection } from 'typeorm'
 
 class UserAccountRepository implements ILoudUserAccountRepository {
   public async check ({ email }: ILoudUserAccountRepository.Params): Promise<ILoudUserAccountRepository.Return> {
@@ -34,40 +34,44 @@ class User {
 
 describe('UserAccountRepository', () => {
   describe('load', () => {
-    it('Should return an account if email exists', async () => {
+    let sut: UserAccountRepository
+    let userRepository: Repository<User>
+    let backup: IBackup
+
+    beforeAll(async () => {
       const db = newDb()
       const connection: Connection = await db.adapters.createTypeormConnection({
         type: 'postgres',
         entities: [User]
       })
       await connection.synchronize()
+      backup = db.backup() // Trás um ponto de restauração, já que fica armazenada a criação de um usuario
+      userRepository = getRepository(User)
+    })
 
-      const userRepository = getRepository(User)
-      await userRepository.save({ email: 'existing_email' })
+    afterAll(async () => {
+      await getConnection().close() // TYPEORM desconecta a conexão com o banco ativa
+    })
+
+    beforeEach(() => {
+      backup.restore()
+      sut = new UserAccountRepository()
+    })
+
+    // TO:DO o db.backup ajudou no empilhamento das chamadas.. ajudando assim a limpar o banco assim que o proximo tester for feito
+    it('Should return an account if email exists', async () => {
+      await userRepository.save({ email: 'any_email' })
       const sut = new UserAccountRepository()
 
-      const account = await sut.check({ email: 'existing_email' })
+      const account = await sut.check({ email: 'any_email' })
 
-      expect(account).toEqual({
-        id: '1'
-      })
-
-      await connection.close()
+      expect(account).toEqual({ id: '1' })
     })
 
     it('Should return an undefined if email not exists', async () => {
-      const db = newDb()
-      const connection: Connection = await db.adapters.createTypeormConnection({
-        type: 'postgres',
-        entities: [User]
-      })
-      await connection.synchronize()
-      const sut = new UserAccountRepository()
-
-      const account = await sut.check({ email: 'new_email' })
+      const account = await sut.check({ email: 'any_email' })
 
       expect(account).toBeUndefined()
-      await connection.close()
     })
   })
 })
