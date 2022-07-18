@@ -1,19 +1,10 @@
 import { UserEntity } from '@infra/postgres/entities'
 import { UserAccountRepository } from '@infra/postgres/repositories'
 
-import { IBackup, IMemoryDb, newDb } from 'pg-mem'
-import { Connection, getRepository, Repository, getConnection } from 'typeorm'
+import { IBackup } from 'pg-mem'
+import { getRepository, Repository, getConnection } from 'typeorm'
 
-// Arquivo reaproveital para conexão do banco em memória
-const makeFakeDb = async (entities?: any[]): Promise<IMemoryDb> => {
-  const db = newDb()
-  const connection: Connection = await db.adapters.createTypeormConnection({
-    type: 'postgres',
-    entities: entities ?? ['src/infra/postgres/entities/index.ts'] // Caso for repassado uma entidade ele procurar ela, caso contrário pegar todas a entidades do index da pasta entites
-  })
-  await connection.synchronize()
-  return db
-}
+import { makeFakeDb } from '../mocks'
 
 describe('UserAccountRepository', () => {
   describe('load', () => {
