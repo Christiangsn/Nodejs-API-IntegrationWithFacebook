@@ -10,6 +10,8 @@
     "moduleResolution": "node", // Importar arquivos de uma pasta ou arquivo diretamente - MODULOS
     "module": "commonjs", // Transformar importações de import para Require para o node entender - MODULOS
     "baseUrl": "./src",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "paths":{
         "@main/*": ["main/*"],
         "@domain/*": ["domain/*"],
