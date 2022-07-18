@@ -6,9 +6,7 @@ import { Entity, PrimaryGeneratedColumn, Column, Connection, getRepository } fro
 class UserAccountRepository implements ILoudUserAccountRepository {
   public async check ({ email }: ILoudUserAccountRepository.Params): Promise<ILoudUserAccountRepository.Return> {
     const userRepository = getRepository(User)
-    const user = await userRepository.findOne({
-      email
-    })
+    const user = await userRepository.findOne({ email })
 
     if (user !== undefined) {
       return {
@@ -53,6 +51,23 @@ describe('UserAccountRepository', () => {
       expect(account).toEqual({
         id: '1'
       })
+
+      await connection.close()
+    })
+
+    it('Should return an undefined if email not exists', async () => {
+      const db = newDb()
+      const connection: Connection = await db.adapters.createTypeormConnection({
+        type: 'postgres',
+        entities: [User]
+      })
+      await connection.synchronize()
+      const sut = new UserAccountRepository()
+
+      const account = await sut.check({ email: 'new_email' })
+
+      expect(account).toBeUndefined()
+      await connection.close()
     })
   })
 })
