@@ -1,4 +1,4 @@
-import { ILoudUserAccountRepository } from '@data/contracts/repositories'
+import { ILoudUserAccountRepository, ISaveFacebookAccountRepository } from '@data/contracts/repositories'
 
 import { getRepository } from 'typeorm'
 import { UserEntity } from '../entities'
@@ -15,5 +15,10 @@ export class UserAccountRepository implements ILoudUserAccountRepository {
         name: user?.name ?? undefined
       }
     }
+  }
+
+  public async saveWithFacebook ({ email, facebookId, name }: ISaveFacebookAccountRepository.Params): Promise<void> {
+    const userRepository = getRepository(UserEntity)
+    await userRepository.save({ email, facebookId, name })
   }
 }

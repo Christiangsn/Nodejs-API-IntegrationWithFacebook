@@ -44,13 +44,20 @@ describe('UserAccountRepository', () => {
   })
 
   describe('saveWithFacebook', () => {
-    // O db.backup ajudou no empilhamento das chamadas.. ajudando assim a limpar o banco assim que o proximo tester for feito
-    it('Should return an account if email exists', async () => {
-      await userRepository.save({ email: 'any_email' })
+    it('Should create an account if id is undefined', async () => {
+      await sut.saveWithFacebook({ email: 'any_email', name: 'any_name', facebookId: 'any_fb_id' })
 
-      const account = await sut.check({ email: 'any_email' })
+      const user = await userRepository.findOne({ email: 'any_email' })
 
-      expect(account).toEqual({ id: '1' })
+      expect(user?.id).toBe(1)
+    })
+
+    it('Should create an account if id is undefined', async () => {
+      await sut.saveWithFacebook({ email: 'any_email', name: 'any_name', facebookId: 'any_fb_id' })
+
+      const user = await userRepository.findOne({ email: 'any_email' })
+
+      expect(user?.id).toBe(1)
     })
   })
 })
