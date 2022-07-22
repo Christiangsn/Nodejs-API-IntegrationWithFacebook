@@ -3,10 +3,15 @@ import { ILoudUserAccountRepository, ISaveFacebookAccountRepository } from '@dat
 import { getRepository } from 'typeorm'
 import { UserEntity } from '../entities'
 
+// Simplificar parametros grandes
+type TLoadParams = ILoudUserAccountRepository.Params
+type TSaveFBParams = ISaveFacebookAccountRepository.Params
+
 export class UserAccountRepository implements ILoudUserAccountRepository {
-  public async check ({ email }: ILoudUserAccountRepository.Params): Promise<ILoudUserAccountRepository.Return> {
-    const userRepository = getRepository(UserEntity)
-    const user = await userRepository.findOne({ email })
+  private readonly userRepository = getRepository(UserEntity)
+
+  public async check ({ email }: TLoadParams): Promise<ILoudUserAccountRepository.Return> {
+    const user = await this.userRepository.findOne({ email })
 
     // Validar se o usuário não vai retornar vazio do banco
     if (user !== undefined) {
@@ -17,8 +22,20 @@ export class UserAccountRepository implements ILoudUserAccountRepository {
     }
   }
 
-  public async saveWithFacebook ({ email, facebookId, name }: ISaveFacebookAccountRepository.Params): Promise<void> {
-    const userRepository = getRepository(UserEntity)
-    await userRepository.save({ email, facebookId, name })
+  public async saveWithFacebook ({ id, email, facebookId, name }: TSaveFBParams): Promise<void> {
+    // Se não existir o ID enviado por parametro - Criar um usuario
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (!id) {
+      await this.userRepository.save({ email, facebookId, name })
+      return
+    }
+
+    // Se existir um id dar um update nos dados
+    await this.userRepository.update({
+      id: Number(id)
+    }, {
+      name,
+      facebookId
+    })
   }
 }
