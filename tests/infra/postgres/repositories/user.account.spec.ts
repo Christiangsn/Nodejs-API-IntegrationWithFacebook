@@ -45,20 +45,24 @@ describe('UserAccountRepository', () => {
 
   describe('saveWithFacebook', () => {
     it('Should create an account if id is undefined', async () => {
-      await sut.saveWithFacebook({ email: 'any_email', name: 'any_name', facebookId: 'any_fb_id' })
+      const { id } = await sut.saveWithFacebook({ email: 'any_email', name: 'any_name', facebookId: 'any_fb_id' })
 
       const user = await userRepository.findOne({ email: 'any_email' })
 
+      // Garantir que o ID seja o mesmo que foi inserido na criação e retorne o id na request da classe
       expect(user?.id).toBe(1)
+      expect(id).toBe('1')
     })
 
     it('Should update account if id is defined', async () => {
-      await userRepository.save({ email: 'any_email', name: 'any_name', facebookId: 'any_fb_id' })
+      const { id } = await userRepository.save({ email: 'any_email', name: 'any_name', facebookId: 'any_fb_id' })
 
       await sut.saveWithFacebook({ id: '1', email: 'new_email', name: 'new_name', facebookId: 'new_fb_id' })
       const user = await userRepository.findOne({ id: 1 })
 
+      // Garantir que o ID seja o mesmo que foi inserido e retorne o id na request da classe
       expect(user).toEqual({ id: 1, email: 'any_email', name: 'new_name', facebookId: 'new_fb_id' })
+      expect(id).toBe(1)
     })
   })
 })

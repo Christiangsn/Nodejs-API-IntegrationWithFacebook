@@ -7,6 +7,8 @@ import { UserEntity } from '../entities'
 type TLoadParams = ILoudUserAccountRepository.Params
 type TSaveFBParams = ISaveFacebookAccountRepository.Params
 
+type TSaveFBReturn = ISaveFacebookAccountRepository.Return
+
 export class UserAccountRepository implements ILoudUserAccountRepository {
   private readonly userRepository = getRepository(UserEntity)
 
@@ -22,12 +24,14 @@ export class UserAccountRepository implements ILoudUserAccountRepository {
     }
   }
 
-  public async saveWithFacebook ({ id, email, facebookId, name }: TSaveFBParams): Promise<void> {
+  public async saveWithFacebook ({ id, email, facebookId, name }: TSaveFBParams): Promise<TSaveFBReturn> {
     // Se não existir o ID enviado por parametro - Criar um usuario
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (!id) {
-      await this.userRepository.save({ email, facebookId, name })
-      return
+      const newUser = await this.userRepository.save({ email, facebookId, name })
+      return {
+        id: String(newUser.id)
+      }
     }
 
     // Se existir um id dar um update nos dados
@@ -37,5 +41,9 @@ export class UserAccountRepository implements ILoudUserAccountRepository {
       name,
       facebookId
     })
+
+    return {
+      id: String(id)
+    }
   }
 }
