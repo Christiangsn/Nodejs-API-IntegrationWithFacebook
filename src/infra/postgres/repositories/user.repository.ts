@@ -9,7 +9,7 @@ type TSaveFBParams = ISaveFacebookAccountRepository.Params
 
 type TSaveFBReturn = ISaveFacebookAccountRepository.Return
 
-export class UserAccountRepository implements ILoudUserAccountRepository {
+export class UserAccountRepository implements ILoudUserAccountRepository, ISaveFacebookAccountRepository {
   private readonly userRepository = getRepository(UserEntity)
 
   public async check ({ email }: TLoadParams): Promise<ILoudUserAccountRepository.Return> {
