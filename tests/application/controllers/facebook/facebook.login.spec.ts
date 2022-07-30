@@ -4,6 +4,7 @@ import { IFacebookAuth } from '@domain/contracts'
 import { mock, MockProxy } from 'jest-mock-extended'
 import { FacebookLoginController } from '@app/controllers/facebook/facebook.login'
 import { ServerError } from '@app/errors/http'
+import { RequiredFieldError } from '@app/errors'
 
 describe('FacebookLoginController', () => {
   let FacebookAuthenticationUseCases: MockProxy<IFacebookAuth>
@@ -27,7 +28,7 @@ describe('FacebookLoginController', () => {
     const logon = await sut.run({ token: '' })
     expect(logon).toEqual({
       statusCode: 400,
-      data: new Error('The field token is required')
+      data: new RequiredFieldError('token')
     })
   })
 
@@ -36,7 +37,7 @@ describe('FacebookLoginController', () => {
     const logon = await sut.run({ token: null })
     expect(logon).toEqual({
       statusCode: 400,
-      data: new Error('The field token is required')
+      data: new RequiredFieldError('token')
     })
   })
 
@@ -45,7 +46,7 @@ describe('FacebookLoginController', () => {
     const logon = await sut.run({ token: undefined })
     expect(logon).toEqual({
       statusCode: 400,
-      data: new Error('The field token is required')
+      data: new RequiredFieldError('token')
     })
   })
 

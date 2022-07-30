@@ -1,5 +1,6 @@
-import { ServerError } from '@app/errors'
+import { RequiredFieldError, ServerError } from '@app/errors'
 import { IHttpResponse } from '@app/helpers/http'
+import { BadRequest } from '@app/helpers/responses'
 import { IFacebookAuth } from '@domain/contracts'
 import { AccessToken } from '@domain/models'
 
@@ -11,10 +12,7 @@ export class FacebookLoginController {
   public async run (httpRequest: any): Promise<IHttpResponse> {
     try {
       if (httpRequest.token === '' || httpRequest.token === null || httpRequest.token === undefined) {
-        return {
-          statusCode: 400,
-          data: new Error('The field token is required')
-        }
+        return BadRequest(new RequiredFieldError('token'))
       }
 
       // Retorno do result pode ser o token ou um erro
