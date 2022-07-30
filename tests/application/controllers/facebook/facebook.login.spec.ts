@@ -13,31 +13,48 @@ class FacebookLoginController {
   ) {}
 
   public async run (httpRequest: any): Promise<IHttpResponse> {
-    if (httpRequest.token === '' || httpRequest.token === null || httpRequest.token === undefined) {
-      return {
-        statusCode: 400,
-        data: new Error('The field token is required')
-      }
-    }
-
-    // Retorno do result pode ser o token ou um erro
-    const result = await this.facebookAuthenticationUseCases.execute({ token: httpRequest.token })
-
-    // Ser for uma instance de um token liberar acesso
-    if (result instanceof AccessToken) {
-      return {
-        statusCode: 200,
-        data: {
-          acessToken: result.value
+    try {
+      if (httpRequest.token === '' || httpRequest.token === null || httpRequest.token === undefined) {
+        return {
+          statusCode: 400,
+          data: new Error('The field token is required')
         }
       }
-    }
 
-    // Default caso não conseguir processar as regras de cima como erro
-    return {
-      statusCode: 401,
-      data: result
+      // Retorno do result pode ser o token ou um erro
+      const result = await this.facebookAuthenticationUseCases.execute({ token: httpRequest.token })
+
+      // Ser for uma instance de um token liberar acesso
+      if (result instanceof AccessToken) {
+        return {
+          statusCode: 200,
+          data: {
+            acessToken: result.value
+          }
+        }
+      }
+
+      // Default caso não conseguir processar as regras de cima como erro
+      return {
+        statusCode: 401,
+        data: result
+      }
+    } catch (err) {
+      return {
+        statusCode: 500,
+        data: new ServerError(err as Error)
+      }
     }
+  }
+}
+
+class ServerError extends Error {
+  constructor (
+    error?: Error
+  ) {
+    super('Internal Server Error')
+    this.name = 'Server Error'
+    this.stack = error?.stack
   }
 }
 
@@ -112,6 +129,19 @@ describe('FacebookLoginController', () => {
       data: {
         acessToken: 'any_value'
       }
+    })
+  })
+
+  // Caso estourar um erro na camadas
+  it('should return 400 if token fails', async () => {
+    const error = new Error('infra_error')
+    // MOCK DE ERRO
+    FacebookAuthenticationUseCases.execute.mockRejectedValueOnce(error)
+
+    const logon = await sut.run({ token: 'any_token' })
+    expect(logon).toEqual({
+      statusCode: 500,
+      data: new ServerError(error)
     })
   })
 })
