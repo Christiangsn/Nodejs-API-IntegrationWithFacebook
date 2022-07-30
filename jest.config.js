@@ -13,7 +13,8 @@ module.exports = {
     '@util/(.*)': '<rootDir>/src/util/$1',
     '@infra/(.*)': '<rootDir>/src/infra/$1',
     '@domain/(.*)': '<rootDir>/src/domain/$1',
-    '@main/(.*)': '<rootDir>/src/main/$1'
+    '@main/(.*)': '<rootDir>/src/main/$1',
+    '@app/(.*)': '<rootDir>/src/app/$1'
   },
   modulePaths: [
     '<rootDir>',
