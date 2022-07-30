@@ -1,6 +1,7 @@
-import { RequiredFieldError, ServerError } from '@app/errors'
+import { RequiredFieldError } from '@app/errors'
 import { IHttpResponse } from '@app/helpers/http'
 import { BadRequest } from '@app/helpers/responses'
+import { InternalServerError } from '@app/helpers/responses/server.error'
 import { Anauthorized } from '@app/helpers/responses/unauthorized'
 import { IFacebookAuth } from '@domain/contracts'
 import { AccessToken } from '@domain/models'
@@ -32,10 +33,7 @@ export class FacebookLoginController {
       // Default caso não conseguir processar as regras de cima como erro
       return Anauthorized()
     } catch (err) {
-      return {
-        statusCode: 500,
-        data: new ServerError(err as Error)
-      }
+      return InternalServerError(err as Error)
     }
   }
 }

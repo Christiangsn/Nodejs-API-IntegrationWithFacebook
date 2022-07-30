@@ -82,7 +82,7 @@ describe('FacebookLoginController', () => {
   })
 
   // Caso estourar um erro na camadas
-  it('should return 400 if token fails', async () => {
+  it('should return 500 throw exception', async () => {
     const error = new Error('infra_error')
     // MOCK DE ERRO
     FacebookAuthenticationUseCases.execute.mockRejectedValueOnce(error)
