@@ -6,7 +6,7 @@ import { IFacebookAuth } from '@domain/contracts'
 import { AccessToken } from '@domain/models'
 
 type IHttpRequest = {
-  token: string | undefined | null
+  token: string
 }
 
 type Model = Error | {
@@ -20,10 +20,10 @@ export class FacebookLoginController {
 
   public async run (httpRequest: IHttpRequest): Promise<IHttpResponse<Model>> {
     try {
-      if (httpRequest.token === '' || httpRequest.token === null || httpRequest.token === undefined) {
-        return BadRequest(new RequiredFieldError('token'))
+      const error = this.validate(httpRequest)
+      if (error) {
+        return BadRequest(error)
       }
-
       // Retorno do result pode ser o token ou um erro
       const accessToken = await this.facebookAuthenticationUseCases.execute({ token: httpRequest.token })
 
@@ -39,5 +39,13 @@ export class FacebookLoginController {
     } catch (err) {
       return InternalServerError(err as Error)
     }
+  }
+
+  private validate (httpRequest: IHttpRequest): Error | null {
+    if (httpRequest.token === '' || httpRequest.token === null || httpRequest.token === undefined) {
+      return new RequiredFieldError('token')
+    }
+
+    return null
   }
 }
