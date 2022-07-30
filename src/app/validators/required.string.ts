@@ -6,11 +6,11 @@ export class RequiredStringValidator {
     private readonly fieldName: string
   ) {}
 
-  public validateString (): Error | null {
+  public validate (): Error | undefined {
     if (this.value === '' || this.value === null || this.value === undefined) {
       return new RequiredFieldError(this.fieldName)
     }
 
-    return null
+    return undefined
   }
 }

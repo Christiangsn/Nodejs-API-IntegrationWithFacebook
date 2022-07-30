@@ -1,7 +1,7 @@
 import { IHttpResponse } from '@app/helpers/http'
 import { BadRequest, Success, InternalServerError } from '@app/helpers/responses'
 import { Anauthorized } from '@app/helpers/responses/unauthorized'
-import { RequiredStringValidator } from '@app/validators'
+import { RequiredStringValidator, ValidationComposite } from '@app/validators'
 import { IFacebookAuth } from '@domain/contracts'
 import { AccessToken } from '@domain/models'
 
@@ -21,7 +21,7 @@ export class FacebookLoginController {
   public async run (httpRequest: IHttpRequest): Promise<IHttpResponse<Model>> {
     try {
       const error = this.validate(httpRequest)
-      if (error) {
+      if (error !== undefined) {
         return BadRequest(error)
       }
       // Retorno do result pode ser o token ou um erro
@@ -41,13 +41,9 @@ export class FacebookLoginController {
     }
   }
 
-  private validate (httpRequest: IHttpRequest): Error | null {
-    const validator = new RequiredStringValidator(httpRequest.token, 'token').validateString()
-
-    if (!validator) {
-      return null
-    }
-
-    return validator
+  private validate (httpRequest: IHttpRequest): Error | undefined {
+    return new ValidationComposite([
+      new RequiredStringValidator(httpRequest.token, 'token')
+    ]).validate()
   }
 }
