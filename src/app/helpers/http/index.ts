@@ -1,4 +1,4 @@
-export type IHttpResponse = {
+export type IHttpResponse<T = any> = {
   statusCode: number
-  data: any
+  data: T
 }

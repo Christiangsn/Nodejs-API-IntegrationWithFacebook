@@ -5,12 +5,20 @@ import { Anauthorized } from '@app/helpers/responses/unauthorized'
 import { IFacebookAuth } from '@domain/contracts'
 import { AccessToken } from '@domain/models'
 
+type IHttpRequest = {
+  token: string | undefined | null
+}
+
+type Model = Error | {
+  accessToken: string
+}
+
 export class FacebookLoginController {
   constructor (
     private readonly facebookAuthenticationUseCases: IFacebookAuth
   ) {}
 
-  public async run (httpRequest: any): Promise<IHttpResponse> {
+  public async run (httpRequest: IHttpRequest): Promise<IHttpResponse<Model>> {
     try {
       if (httpRequest.token === '' || httpRequest.token === null || httpRequest.token === undefined) {
         return BadRequest(new RequiredFieldError('token'))
@@ -22,7 +30,7 @@ export class FacebookLoginController {
       // Ser for uma instance de um token liberar acesso
       if (accessToken instanceof AccessToken) {
         return Success({
-          acessToken: accessToken.value
+          accessToken: accessToken.value
         })
       }
 
