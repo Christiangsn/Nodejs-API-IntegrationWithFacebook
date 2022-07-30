@@ -13,7 +13,7 @@ class ValidationComposite implements Validator {
   public validate (): Error | undefined {
     for (const validator of this.validators) {
       const error = validator.validate()
-      if (error !== null) {
+      if (error !== undefined) {
         return error
       }
     }
@@ -46,11 +46,19 @@ describe('ValidationComposite', () => {
   })
 
   it('Should return the first error', () => {
-    validators1.validate.mockReturnValue(new Error('error_1'))
-    validators2.validate.mockReturnValue(new Error('error_2'))
+    validators1.validate.mockReturnValueOnce(new Error('error_1'))
+    validators2.validate.mockReturnValueOnce(new Error('error_2'))
 
     const error = sut.validate()
 
     expect(error).toEqual(new Error('error_1'))
+  })
+
+  it('Should return the second error', () => {
+    validators2.validate.mockReturnValueOnce(new Error('error_2'))
+
+    const error = sut.validate()
+
+    expect(error).toEqual(new Error('error_2'))
   })
 })
