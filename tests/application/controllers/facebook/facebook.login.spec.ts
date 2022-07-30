@@ -4,14 +4,18 @@ import { IFacebookAuth } from '@domain/contracts'
 import { mock, MockProxy } from 'jest-mock-extended'
 import { FacebookLoginController } from '@app/controllers/facebook/facebook.login'
 import { ServerError } from '@app/errors/http'
-import { RequiredFieldError } from '@app/errors'
 import { AnauthorizedError } from '@app/errors/http.anauthorized'
+import { RequiredStringValidator } from '@app/validators'
+
+jest.mock('@app/validators/required.string')
 
 describe('FacebookLoginController', () => {
   let FacebookAuthenticationUseCases: MockProxy<IFacebookAuth>
   let sut: FacebookLoginController
+  let token: string
 
   beforeAll(() => {
+    token = 'any_token'
     // Mockar a interface do caso de uso
     FacebookAuthenticationUseCases = mock()
     // Mockar o retorno de sucesso
@@ -25,45 +29,35 @@ describe('FacebookLoginController', () => {
   })
 
   // Se o token do facebook for vazio
-  it('should return 400 if token is empty', async () => {
-    const logon = await sut.run({ token: '' })
-    expect(logon).toEqual({
-      statusCode: 400,
-      data: new RequiredFieldError('token')
-    })
-  })
+  it('should return 400 if validation fails', async () => {
+    const error = new Error('Validated is fails')
+    const facebookLoginControllerSpy = jest.fn().mockImplementationOnce(() => ({
+      validateString: jest.fn().mockReturnValue(error)
+    }))
+    jest.mocked(RequiredStringValidator).mockImplementationOnce(facebookLoginControllerSpy)
 
-  // Se o token do facebook for null
-  it('should return 400 if token is null', async () => {
-    const logon = await sut.run({ token: null as any })
-    expect(logon).toEqual({
-      statusCode: 400,
-      data: new RequiredFieldError('token')
-    })
-  })
+    const logon = await sut.run({ token })
 
-  // Se o token do facebook for undefined
-  it('should return 400 if token is undefined', async () => {
-    const logon = await sut.run({ token: undefined as any })
+    expect(RequiredStringValidator).toHaveBeenCalledWith('any_token', 'token')
     expect(logon).toEqual({
       statusCode: 400,
-      data: new RequiredFieldError('token')
+      data: error
     })
   })
 
   // Chamar o caso de uso do facebook authentication
   it('should call FacebookAuthenticationUseCases with correct params', async () => {
-    await sut.run({ token: 'any_token' })
-    expect(FacebookAuthenticationUseCases.execute).toHaveBeenCalledWith({ token: 'any_token' })
+    await sut.run({ token })
+    expect(FacebookAuthenticationUseCases.execute).toHaveBeenCalledWith({ token })
     expect(FacebookAuthenticationUseCases.execute).toHaveBeenCalledTimes(1)
   })
 
   // Se a authenticação falhar
-  it('should return 400 if token fails', async () => {
+  it('should return 401 if token fails', async () => {
     // MOCK DE ERRO
     FacebookAuthenticationUseCases.execute.mockResolvedValueOnce(new TAuthenticationError())
 
-    const logon = await sut.run({ token: 'any_token' })
+    const logon = await sut.run({ token })
     expect(logon).toEqual({
       statusCode: 401,
       data: new AnauthorizedError()
@@ -72,7 +66,7 @@ describe('FacebookLoginController', () => {
 
   // Caso for sucesso retornar o token de acesso
   it('should return 200 if authentication is successful', async () => {
-    const logon = await sut.run({ token: 'any_token' })
+    const logon = await sut.run({ token })
     expect(logon).toEqual({
       statusCode: 200,
       data: {
@@ -87,7 +81,7 @@ describe('FacebookLoginController', () => {
     // MOCK DE ERRO
     FacebookAuthenticationUseCases.execute.mockRejectedValueOnce(error)
 
-    const logon = await sut.run({ token: 'any_token' })
+    const logon = await sut.run({ token })
     expect(logon).toEqual({
       statusCode: 500,
       data: new ServerError(error)
