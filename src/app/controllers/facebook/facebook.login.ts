@@ -1,6 +1,7 @@
 import { RequiredFieldError, ServerError } from '@app/errors'
 import { IHttpResponse } from '@app/helpers/http'
 import { BadRequest } from '@app/helpers/responses'
+import { Anauthorized } from '@app/helpers/responses/unauthorized'
 import { IFacebookAuth } from '@domain/contracts'
 import { AccessToken } from '@domain/models'
 
@@ -16,23 +17,20 @@ export class FacebookLoginController {
       }
 
       // Retorno do result pode ser o token ou um erro
-      const result = await this.facebookAuthenticationUseCases.execute({ token: httpRequest.token })
+      const accessToken = await this.facebookAuthenticationUseCases.execute({ token: httpRequest.token })
 
       // Ser for uma instance de um token liberar acesso
-      if (result instanceof AccessToken) {
+      if (accessToken instanceof AccessToken) {
         return {
           statusCode: 200,
           data: {
-            acessToken: result.value
+            acessToken: accessToken.value
           }
         }
       }
 
       // Default caso não conseguir processar as regras de cima como erro
-      return {
-        statusCode: 401,
-        data: result
-      }
+      return Anauthorized()
     } catch (err) {
       return {
         statusCode: 500,

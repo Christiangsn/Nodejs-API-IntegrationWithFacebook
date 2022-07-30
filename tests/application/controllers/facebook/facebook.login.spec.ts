@@ -5,6 +5,7 @@ import { mock, MockProxy } from 'jest-mock-extended'
 import { FacebookLoginController } from '@app/controllers/facebook/facebook.login'
 import { ServerError } from '@app/errors/http'
 import { RequiredFieldError } from '@app/errors'
+import { AnauthorizedError } from '@app/errors/http.anauthorized'
 
 describe('FacebookLoginController', () => {
   let FacebookAuthenticationUseCases: MockProxy<IFacebookAuth>
@@ -65,7 +66,7 @@ describe('FacebookLoginController', () => {
     const logon = await sut.run({ token: 'any_token' })
     expect(logon).toEqual({
       statusCode: 401,
-      data: new TAuthenticationError()
+      data: new AnauthorizedError()
     })
   })
 
