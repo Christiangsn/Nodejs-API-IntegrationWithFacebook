@@ -1,4 +1,5 @@
-import { mock } from 'jest-mock-extended'
+import { MockProxy, mock } from 'jest-mock-extended'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 interface Validator {
   validate: () => Error | null
@@ -15,16 +16,25 @@ class ValidationComposite {
 }
 
 describe('ValidationComposite', () => {
-  it('Should return undefined if all Validators returns undefined', () => {
-    const validators1 = mock<Validator>()
+  let sut: ValidationComposite
+  let validators1: MockProxy<Validator>
+
+  let validators2: MockProxy<Validator>
+  let validators: Validator[]
+
+  beforeAll(() => {
+    validators1 = mock<Validator>()
     validators1.validate.mockReturnValue(null)
-
-    const validators2 = mock<Validator>()
+    validators2 = mock<Validator>()
     validators2.validate.mockReturnValue(null)
+    validators = [validators1, validators2]
+  })
 
-    const validators = [validators1, validators2]
+  beforeEach(() => {
+    sut = new ValidationComposite(validators)
+  })
 
-    const sut = new ValidationComposite(validators)
+  it('Should return undefined if all Validators returns undefined', () => {
     const error = sut.validate()
 
     expect(error).toBeNull()
