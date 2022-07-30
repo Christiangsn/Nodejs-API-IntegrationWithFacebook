@@ -1,7 +1,6 @@
 import { RequiredFieldError } from '@app/errors'
 import { IHttpResponse } from '@app/helpers/http'
-import { BadRequest } from '@app/helpers/responses'
-import { InternalServerError } from '@app/helpers/responses/server.error'
+import { BadRequest, Success, InternalServerError } from '@app/helpers/responses'
 import { Anauthorized } from '@app/helpers/responses/unauthorized'
 import { IFacebookAuth } from '@domain/contracts'
 import { AccessToken } from '@domain/models'
@@ -22,12 +21,9 @@ export class FacebookLoginController {
 
       // Ser for uma instance de um token liberar acesso
       if (accessToken instanceof AccessToken) {
-        return {
-          statusCode: 200,
-          data: {
-            acessToken: accessToken.value
-          }
-        }
+        return Success({
+          acessToken: accessToken.value
+        })
       }
 
       // Default caso não conseguir processar as regras de cima como erro
