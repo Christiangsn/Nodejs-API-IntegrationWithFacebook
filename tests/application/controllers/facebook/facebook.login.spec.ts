@@ -1,3 +1,7 @@
+import { AccessToken } from '@domain/models'
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+import { TAuthenticationError } from '@domain/error'
 import { IFacebookAuth } from '@domain/contracts'
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -8,11 +12,31 @@ class FacebookLoginController {
     private readonly facebookAuthenticationUseCases: IFacebookAuth
   ) {}
 
-  async run (httpRequest: any): Promise<IHttpResponse> {
-    await this.facebookAuthenticationUseCases.execute({ token: httpRequest.token })
+  public async run (httpRequest: any): Promise<IHttpResponse> {
+    if (httpRequest.token === '' || httpRequest.token === null || httpRequest.token === undefined) {
+      return {
+        statusCode: 400,
+        data: new Error('The field token is required')
+      }
+    }
+
+    // Retorno do result pode ser o token ou um erro
+    const result = await this.facebookAuthenticationUseCases.execute({ token: httpRequest.token })
+
+    // Ser for uma instance de um token liberar acesso
+    if (result instanceof AccessToken) {
+      return {
+        statusCode: 200,
+        data: {
+          acessToken: result.value
+        }
+      }
+    }
+
+    // Default caso não conseguir processar as regras de cima como erro
     return {
-      statusCode: 400,
-      data: new Error('The field token is required')
+      statusCode: 401,
+      data: result
     }
   }
 }
@@ -24,6 +48,8 @@ describe('FacebookLoginController', () => {
   beforeAll(() => {
     // Mockar a interface do caso de uso
     FacebookAuthenticationUseCases = mock()
+    // Mockar o retorno de sucesso
+    FacebookAuthenticationUseCases.execute.mockResolvedValue(new AccessToken('any_value'))
   })
 
   beforeEach(() => {
@@ -64,5 +90,28 @@ describe('FacebookLoginController', () => {
     await sut.run({ token: 'any_token' })
     expect(FacebookAuthenticationUseCases.execute).toHaveBeenCalledWith({ token: 'any_token' })
     expect(FacebookAuthenticationUseCases.execute).toHaveBeenCalledTimes(1)
+  })
+
+  // Se a authenticação falhar
+  it('should return 400 if token fails', async () => {
+    // MOCK DE ERRO
+    FacebookAuthenticationUseCases.execute.mockResolvedValueOnce(new TAuthenticationError())
+
+    const logon = await sut.run({ token: 'any_token' })
+    expect(logon).toEqual({
+      statusCode: 401,
+      data: new TAuthenticationError()
+    })
+  })
+
+  // Caso for sucesso retornar o token de acesso
+  it('should return 200 if authentication is successful', async () => {
+    const logon = await sut.run({ token: 'any_token' })
+    expect(logon).toEqual({
+      statusCode: 200,
+      data: {
+        acessToken: 'any_value'
+      }
+    })
   })
 })

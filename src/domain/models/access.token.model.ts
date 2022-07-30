@@ -1,6 +1,6 @@
 export class AccessToken {
   constructor (
-    private readonly value: string
+    public readonly value: string
   ) {}
 
   public static get expirationInMs (): number {
