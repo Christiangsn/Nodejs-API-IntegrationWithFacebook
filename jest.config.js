@@ -16,6 +16,7 @@ module.exports = {
     '@main/(.*)': '<rootDir>/src/main/$1',
     '@app/(.*)': '<rootDir>/src/app/$1'
   },
+  testMatch: ['**/**.spec.ts'],
   modulePaths: [
     '<rootDir>',
     '/home/some/other/path'
