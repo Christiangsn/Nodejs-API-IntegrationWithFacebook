@@ -3,11 +3,8 @@ import { TAuthenticationError } from '@domain/error'
 import { IFacebookAuth } from '@domain/contracts'
 import { mock, MockProxy } from 'jest-mock-extended'
 import { FacebookLoginController } from '@app/controllers/facebook/facebook.login'
-import { ServerError } from '@app/errors/http'
 import { AnauthorizedError } from '@app/errors/http.anauthorized'
-import { RequiredStringValidator, ValidationComposite } from '@app/validators'
-
-jest.mock('@app/validators/composite')
+import { RequiredStringValidator } from '@app/validators'
 
 describe('FacebookLoginController', () => {
   let FacebookAuthenticationUseCases: MockProxy<IFacebookAuth>
@@ -29,22 +26,12 @@ describe('FacebookLoginController', () => {
   })
 
   // Se o token do facebook for vazio
-  it('should return 400 if validation fails', async () => {
-    const error = new Error('Validated is fails')
-    const ValidationCompositeSpy = jest.fn().mockImplementationOnce(() => ({
-      validate: jest.fn().mockReturnValue(error)
-    }))
-    jest.mocked(ValidationComposite).mockImplementationOnce(ValidationCompositeSpy)
+  it('should build validators correctly', async () => {
+    const validators = sut.builderValidators({ token })
 
-    const logon = await sut.run({ token })
-
-    expect(ValidationComposite).toHaveBeenCalledWith([
+    expect(validators).toEqual([
       new RequiredStringValidator('any_token', 'token')
     ])
-    expect(logon).toEqual({
-      statusCode: 400,
-      data: error
-    })
   })
 
   // Chamar o caso de uso do facebook authentication
@@ -74,19 +61,6 @@ describe('FacebookLoginController', () => {
       data: {
         accessToken: 'any_value'
       }
-    })
-  })
-
-  // Caso estourar um erro na camadas
-  it('should return 500 throw exception', async () => {
-    const error = new Error('infra_error')
-    // MOCK DE ERRO
-    FacebookAuthenticationUseCases.execute.mockRejectedValueOnce(error)
-
-    const logon = await sut.run({ token })
-    expect(logon).toEqual({
-      statusCode: 500,
-      data: new ServerError(error)
     })
   })
 })

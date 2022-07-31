@@ -1,9 +1,10 @@
 import { IHttpResponse } from '@app/helpers/http'
-import { BadRequest, Success, InternalServerError } from '@app/helpers/responses'
+import { Success } from '@app/helpers/responses'
 import { Anauthorized } from '@app/helpers/responses/unauthorized'
-import { ValidationBuilder, ValidationComposite } from '@app/validators'
+import { ValidationBuilder, Validator } from '@app/validators'
 import { IFacebookAuth } from '@domain/contracts'
 import { AccessToken } from '@domain/models'
+import { Controller } from '../controller'
 
 type IHttpRequest = {
   token: string
@@ -13,40 +14,31 @@ type Model = Error | {
   accessToken: string
 }
 
-export class FacebookLoginController {
+export class FacebookLoginController extends Controller {
   constructor (
     private readonly facebookAuthenticationUseCases: IFacebookAuth
-  ) {}
-
-  public async run (httpRequest: IHttpRequest): Promise<IHttpResponse<Model>> {
-    try {
-      const error = this.validate(httpRequest)
-      if (error !== undefined) {
-        return BadRequest(error)
-      }
-      // Retorno do result pode ser o token ou um erro
-      const accessToken = await this.facebookAuthenticationUseCases.execute({ token: httpRequest.token })
-
-      // Ser for uma instance de um token liberar acesso
-      if (accessToken instanceof AccessToken) {
-        return Success({
-          accessToken: accessToken.value
-        })
-      }
-
-      // Default caso não conseguir processar as regras de cima como erro
-      return Anauthorized()
-    } catch (err) {
-      return InternalServerError(err as Error)
-    }
+  ) {
+    super()
   }
 
-  private validate (httpRequest: IHttpRequest): Error | undefined {
-    const validators = ValidationBuilder
-      .of({ value: httpRequest.token, fieldName: 'token' })
-      .required()
-      .build()
+  public async execute (httpRequest: IHttpRequest): Promise<IHttpResponse<Model>> {
+    // Retorno do result pode ser o token ou um erro
+    const accessToken = await this.facebookAuthenticationUseCases.execute({ token: httpRequest.token })
 
-    return new ValidationComposite(validators).validate()
+    // Ser for uma instance de um token liberar acesso
+    if (accessToken instanceof AccessToken) {
+      return Success({
+        accessToken: accessToken.value
+      })
+    }
+
+    // Default caso não conseguir processar as regras de cima como erro
+    return Anauthorized()
+  }
+
+  override builderValidators (httpRequest: IHttpRequest): Validator[] {
+    const validators = [...ValidationBuilder.of({ value: httpRequest.token, fieldName: 'token' }).required().build()]
+
+    return validators
   }
 }
