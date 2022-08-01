@@ -3,10 +3,15 @@ import { AxiosHttpClient } from '@infra/http'
 import { env } from '@main/config/env'
 
 describe('Facebook Apí Integration Tests', () => {
-  it('Should return a Facebook User if token is valid', async () => {
-    const axiosClient = new AxiosHttpClient()
-    const sut = new FacebookAPI(axiosClient, env.facebookApi.clientId, env.facebookApi.clientSecret)
+  let axiosClient: AxiosHttpClient
+  let sut: FacebookAPI
 
+  beforeEach(() => {
+    axiosClient = new AxiosHttpClient()
+    sut = new FacebookAPI(axiosClient, env.facebookApi.clientId, env.facebookApi.clientSecret)
+  })
+
+  it('Should return a Facebook User if token is valid', async () => {
     // Valido por 3 meses
     const fbUser = await sut.generation({
       token: 'EAAGuLNa9yJYBAOiHrJ9Sj4kkDqtAD6WZAyXqjZBpUZAxNrXdUIkKSFtRhMFFlHgD9YdHWjuKmKOFuH14AXsAl1xTbSba9liLOZBA3gVa6Qde19KXki7Kt7Yd4fks4vzDXHUWKTLhYte4WhvIQ3q5ZBZC0OfRoVQjc0Q2044FEXWzk7cQ9fIDilqgpIMw5y241wBDj4MKnkGMfbknBx45ih'
@@ -20,9 +25,6 @@ describe('Facebook Apí Integration Tests', () => {
   })
 
   it('Should return a undefined if token is invalid', async () => {
-    const axiosClient = new AxiosHttpClient()
-    const sut = new FacebookAPI(axiosClient, env.facebookApi.clientId, env.facebookApi.clientSecret)
-
     // Valido por 3 meses
     const fbUser = await sut.generation({
       token: 'invalid'
