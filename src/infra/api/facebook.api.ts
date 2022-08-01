@@ -27,33 +27,36 @@ export class FacebookAPI implements ILoadFacebookUserAPI {
   ) { }
 
   public async generation ({ token }: ILoadFacebookUserAPI.Params): Promise<ILoadFacebookUserAPI.Return> {
-    const userInfo = await this.getUserInfo(token)
-
-    return {
-      facebookId: userInfo.id,
-      name: userInfo.name,
-      email: userInfo.email
-    }
+    return new Promise((resolve) => {
+      this.getUserInfo(token)
+        .then((userInfo) => {
+          resolve({
+            facebookId: userInfo.id,
+            name: userInfo.name,
+            email: userInfo.email
+          })
+        }).catch(() => {
+          resolve(undefined)
+        })
+    })
   }
 
   private async getAppToken (): Promise<TAppToken> {
-    return this.httpClient.get({
-      url: `${this.baseURL}/oauth/access_token`,
-      params: {
-        client_id: this.clientID,
-        client_secret: this.clientSecret,
-        grand_type: 'client_credentials'
+    const result = await this.httpClient.get({
+      url: `${this.baseURL}/oauth/access_token?grant_type=client_credentials&client_id=${this.clientID}&client_secret=${this.clientSecret}`,
+      headers: {
+        'Content-Type': 'application/json'
       }
     })
+    return result
   }
 
   private async getDebugToken (token: string): Promise<TDebugToken> {
     const appToken = await this.getAppToken()
     return this.httpClient.get({
-      url: `${this.baseURL}/debug_token`,
-      params: {
-        access_token: appToken.access_token,
-        input_token: token
+      url: `${this.baseURL}/debug_token?access_token=${appToken.access_token}&input_token=${token}`,
+      headers: {
+        'Content-Type': 'application/json'
       }
     })
   }
@@ -61,12 +64,13 @@ export class FacebookAPI implements ILoadFacebookUserAPI {
   private async getUserInfo (token: string): Promise<TFaceboookData> {
     const debugToken = await this.getDebugToken(token)
 
-    return this.httpClient.get({
-      url: `${this.baseURL}/${debugToken.data.user_id}`,
-      params: {
-        fields: ['id', 'name', 'email'].join(','),
-        access_token: token
+    const info = await this.httpClient.get({
+      url: `${this.baseURL}/${debugToken.data.user_id}?fields=id,name,email&access_token=${token}`,
+      headers: {
+        'Content-Type': 'application/json'
       }
     })
+
+    return info
   }
 }
