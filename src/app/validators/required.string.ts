@@ -1,4 +1,4 @@
-import { RequiredFieldError } from '@app/errors'
+import { RequiredFieldError } from '@app/errors/http'
 
 export class RequiredStringValidator {
   constructor (

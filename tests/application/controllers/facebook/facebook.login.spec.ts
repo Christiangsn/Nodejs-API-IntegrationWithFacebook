@@ -3,7 +3,7 @@ import { TAuthenticationError } from '@domain/error'
 import { IFacebookAuth } from '@domain/contracts'
 import { mock, MockProxy } from 'jest-mock-extended'
 import { FacebookLoginController } from '@app/controllers/facebook/facebook.login'
-import { AnauthorizedError } from '@app/errors/http.anauthorized'
+import { AnauthorizedError } from '@app/errors/http/http.anauthorized'
 import { RequiredStringValidator } from '@app/validators'
 
 describe('FacebookLoginController', () => {

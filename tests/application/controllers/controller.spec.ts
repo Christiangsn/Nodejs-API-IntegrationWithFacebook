@@ -1,4 +1,4 @@
-import { ServerError } from '@app/errors/http'
+import { ServerError } from '@app/errors/http/http'
 import { ValidationComposite } from '@app/validators'
 import { Controller } from '@app/controllers/controller'
 import { IHttpResponse } from '@app/helpers/http'
