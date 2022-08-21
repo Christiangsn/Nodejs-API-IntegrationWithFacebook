@@ -11,5 +11,5 @@ export const routes = (app: express.Application): void => {
       (await import(`../routes/${file}`)).default(routers)
     })
 
-  app.use(routers)
+  app.use('/api', routers)
 }
