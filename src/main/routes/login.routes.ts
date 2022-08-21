@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+import { ExpressRouter } from '@infra/http/express.router'
+import { makeFacebookLoginController } from '@main/factories/controllers/facebook/facebook-login'
 import { Router } from 'express'
+
 export default (router: Router): void => {
-  router.post('/api/login/facebook', (req, res) => {
-    res.send({ data: 'any ' })
-  })
+  const controller = makeFacebookLoginController()
+  const adapter = new ExpressRouter(controller)
+  router.post('/api/login/facebook', adapter.adapt)
 }
