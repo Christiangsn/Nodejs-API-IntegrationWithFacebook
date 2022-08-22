@@ -18,6 +18,7 @@ export abstract class Controller {
     try {
       return await this.execute(httpRequest)
     } catch (err) {
+      console.log('error', err)
       return InternalServerError(err as Error)
     }
   }
