@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { ExpressRouter } from '@infra/http/express.router'
+import { ExpressRouter } from '@main/adapters/express.router'
 import { makeFacebookLoginController } from '@main/factories/controllers/facebook/facebook-login'
 import { Router } from 'express'
 
