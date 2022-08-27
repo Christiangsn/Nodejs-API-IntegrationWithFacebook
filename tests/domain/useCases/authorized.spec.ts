@@ -2,7 +2,7 @@
 import { mock, MockProxy } from 'jest-mock-extended'
 
 export interface ITokenValidator {
-    validate: (params: ITokenValidator.Params) => Promise<void>
+    validate: (params: ITokenValidator.Params) => Promise<string>
 }
 
 export namespace ITokenValidator {
@@ -10,7 +10,7 @@ export namespace ITokenValidator {
 }
 
 export interface IAuthorize {
-    auth: (params: { token: string }) => Promise<void>
+    auth: (params: { token: string }) => Promise<string>
 }
 
 export class AuthorizedByToken implements IAuthorize {
@@ -19,8 +19,9 @@ export class AuthorizedByToken implements IAuthorize {
         private readonly cryptography: ITokenValidator
     ) { }
 
-    public async auth (params: { token: string }): Promise<void> {
-        await this.cryptography.validate({ token: params.token})
+    public async auth (params: { token: string }): Promise<string> {
+        const key = await this.cryptography.validate({ token: params.token})
+        return key
     }
 
 }
@@ -33,6 +34,7 @@ describe('Authorized', () => {
 
   beforeAll(() => {
     cryptography = mock()
+    cryptography.validate.mockResolvedValue('any_id')
   })
 
   beforeEach(() => {
@@ -46,6 +48,12 @@ describe('Authorized', () => {
 
     expect(cryptography.validate).toHaveBeenCalledWith({ token })
     expect(cryptography.validate).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should return the correct params', async () => {
+    const userId = await sut.auth({ token })
+
+    expect(userId).toBe('any_id')
   })
 
 
