@@ -1,5 +1,5 @@
-import { TAuthenticationError } from '@domain/error'
-import { AccessToken } from '@domain/models'
+import { TAuthenticationError } from '@domain/entities/error'
+import { AccessToken } from '@domain/entities'
 
 // Evitar colisão de nomes (interface) ao implementar o metodo
 export namespace IFacebookAuth {

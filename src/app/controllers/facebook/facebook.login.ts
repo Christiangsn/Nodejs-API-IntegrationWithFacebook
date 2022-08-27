@@ -2,8 +2,8 @@ import { IHttpResponse } from '@app/helpers/http'
 import { Success } from '@app/helpers/responses'
 import { Anauthorized } from '@app/helpers/responses/unauthorized'
 import { ValidationBuilder, Validator } from '@app/validators'
-import { IFacebookAuth } from '@domain/contracts'
-import { AccessToken } from '@domain/models'
+import { IFacebookAuth } from '@domain/features'
+import { AccessToken } from '@domain/entities'
 import { Controller } from '../controller'
 
 type IHttpRequest = {

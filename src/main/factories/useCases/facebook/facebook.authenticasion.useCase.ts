@@ -1,4 +1,4 @@
-import { FacebookAuthenticationUseCases } from '@data/useCases/facebook'
+import { FacebookAuthenticationUseCases } from '@domain/useCases/facebook'
 import { makeFacebookAPI } from '@main/factories/apis/facebook/facebook.api'
 import { makeJwtTokenGenerator } from '@main/factories/crypto/token.generator'
 import { makeUserRepository } from '@main/factories/repository/user.repository'
