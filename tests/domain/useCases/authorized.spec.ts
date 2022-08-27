@@ -1,30 +1,8 @@
 
+import { ITokenValidator } from '@domain/contracts/crypto'
+import { IAuthorize } from '@domain/features/auth'
+import { AuthorizedByToken } from '@domain/useCases/auth/authorized'
 import { mock, MockProxy } from 'jest-mock-extended'
-
-export interface ITokenValidator {
-    validate: (params: ITokenValidator.Params) => Promise<string>
-}
-
-export namespace ITokenValidator {
-    export type Params = { token: string}
-}
-
-export interface IAuthorize {
-    auth: (params: { token: string }) => Promise<string>
-}
-
-export class AuthorizedByToken implements IAuthorize {
-
-    constructor (
-        private readonly cryptography: ITokenValidator
-    ) { }
-
-    public async auth (params: { token: string }): Promise<string> {
-        const key = await this.cryptography.validate({ token: params.token})
-        return key
-    }
-
-}
 
 describe('Authorized', () => {
   let cryptography: MockProxy<ITokenValidator>
@@ -55,7 +33,5 @@ describe('Authorized', () => {
 
     expect(userId).toBe('any_id')
   })
-
-
 
 })
