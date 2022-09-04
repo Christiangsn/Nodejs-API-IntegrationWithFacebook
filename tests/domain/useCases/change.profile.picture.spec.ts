@@ -2,24 +2,31 @@ import { mock, MockProxy } from 'jest-mock-extended'
 import { IUploadFile } from '@domain/contracts/gateways/file.storage'
 import { IUUIDGenerator } from '@domain/contracts/gateways'
 import { ChangeProfilePicture } from '@domain/useCases/change-profile-picture/change.profile.picture'
+import { ISaveUserPicture } from '@domain/contracts/repositories'
 
 describe('ChangeProfilePicture', () => {
   let uuid: string
   let file: Buffer
   let fileStorage: MockProxy<IUploadFile>
   let crypto: MockProxy<IUUIDGenerator>
+  let userProfileRepository: MockProxy<ISaveUserPicture>
   let sut: ChangeProfilePicture
 
   beforeEach(() => {
     uuid = 'any_unique_id'
     file = Buffer.from('any_buffer')
+
     fileStorage = mock<IUploadFile>()
+    fileStorage.upload.mockResolvedValue('any_url')
+
     crypto = mock<IUUIDGenerator>()
     crypto.uuid.mockReturnValue(uuid)
-    sut = new ChangeProfilePicture(fileStorage, crypto)
+
+    userProfileRepository = mock()
+    sut = new ChangeProfilePicture(fileStorage, crypto, userProfileRepository)
   })
 
-  it('Should call UploadFile withj corect input', async () => {
+  it('Should call UploadFile with corect input', async () => {
     await sut.save({ id: 'any_id', file })
 
     expect(fileStorage.upload).toHaveBeenCalledWith({ file, key: uuid })
@@ -30,5 +37,12 @@ describe('ChangeProfilePicture', () => {
     await sut.save({ id: 'any_id', file: undefined as any })
 
     expect(fileStorage.upload).not.toHaveBeenCalled()
+  })
+
+  it('Should call SaveUserPicture with correct input', async () => {
+    await sut.save({ id: 'any_id', file })
+
+    expect(userProfileRepository.savePicture).toHaveBeenCalledWith({ pictureUrl: 'any_url' })
+    expect(userProfileRepository.savePicture).toHaveBeenCalledTimes(1)
   })
 })
