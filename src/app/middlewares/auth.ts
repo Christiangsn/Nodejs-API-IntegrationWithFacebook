@@ -2,11 +2,12 @@ import { IHttpResponse } from '@app/helpers/http'
 import { Fobidden, Success } from '@app/helpers/responses'
 import { RequiredStringValidator } from '@app/validators'
 import { IAuthorize } from '@domain/features/auth'
+import { IMiddleware } from './middleware'
 
 type IHttpRequest = { authorization: string}
 type Model = Error | { userId: string }
 
-export class AuthenticationMiddleware {
+export class AuthenticationMiddleware implements IMiddleware {
   constructor (
     private readonly authorize: IAuthorize
   ) { }

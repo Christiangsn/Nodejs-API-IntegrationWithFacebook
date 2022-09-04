@@ -1,41 +1,22 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { IHttpResponse } from '@app/helpers/http'
+import { IMiddleware } from '@app/middlewares'
 import { getMockReq, getMockRes } from '@jest-mock/express'
+import { ExpressMiddleware } from '@main/adapters/express.middleware'
 import { NextFunction, Response, Request } from 'express'
 import { mock, MockProxy } from 'jest-mock-extended'
-
-interface Middleware {
-  handle: (httpRequest: any) => Promise<IHttpResponse>
-}
-
-export class ExpressMiddleware {
-  constructor (
-    private readonly expressMiddleware: Middleware
-  ) { }
-
-  public async intercept (req: Request, res: Response, next: NextFunction): Promise<void | Response> {
-    const { statusCode, data } = await this.expressMiddleware.handle({ ...req.headers })
-    if (statusCode === 200) {
-      const entries = Object.entries(data).filter((entry) => entry[1])
-      req.locals = { ...req.locals, ...Object.fromEntries(entries) }
-      return next()
-    }
-    return res.status(statusCode).json(data)
-  }
-}
 
 describe('ExpressMiddleware', () => {
   let req: Request
   let res: Response
   let next: NextFunction
-  let middleware: MockProxy<Middleware>
+  let middleware: MockProxy<IMiddleware>
   let sut: ExpressMiddleware
 
   beforeEach(() => {
     req = getMockReq({ headers: { any: 'any' } })
     res = getMockRes().res
     next = getMockRes().next
-    middleware = mock<Middleware>()
+    middleware = mock<IMiddleware>()
     middleware.handle.mockResolvedValue({
       statusCode: 200,
       data: {
