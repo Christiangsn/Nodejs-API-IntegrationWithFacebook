@@ -1,4 +1,4 @@
-import { mock } from 'jest-mock-extended'
+import { mock, MockProxy } from 'jest-mock-extended'
 import { IProfilePicture } from '@domain/features/profile-picture'
 
 export class ChangeProfilePicture implements IProfilePicture {
@@ -40,15 +40,22 @@ namespace IUUIDGenerator {
 }
 
 describe('ChangeProfilePicture', () => {
-  it('Should call UploadFile withj corect input', async () => {
-    const uuid: string = 'any_unique_id'
-    const file = Buffer.from('any_buffer')
-    const fileStorage = mock<IUploadFile>()
-    const crypto = mock<IUUIDGenerator>()
+  let uuid: string
+  let file: Buffer
+  let fileStorage: MockProxy<IUploadFile>
+  let crypto: MockProxy<IUUIDGenerator>
+  let sut: ChangeProfilePicture
 
+  beforeEach(() => {
+    uuid = 'any_unique_id'
+    file = Buffer.from('any_buffer')
+    fileStorage = mock<IUploadFile>()
+    crypto = mock<IUUIDGenerator>()
     crypto.uuid.mockReturnValue(uuid)
-    const sut = new ChangeProfilePicture(fileStorage, crypto)
+    sut = new ChangeProfilePicture(fileStorage, crypto)
+  })
 
+  it('Should call UploadFile withj corect input', async () => {
     await sut.save({ id: 'any_id', file })
 
     expect(fileStorage.upload).toHaveBeenCalledWith({ file, key: uuid })
