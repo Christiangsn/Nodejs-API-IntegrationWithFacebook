@@ -1,43 +1,7 @@
 import { mock, MockProxy } from 'jest-mock-extended'
-import { IProfilePicture } from '@domain/features/profile-picture'
-
-export class ChangeProfilePicture implements IProfilePicture {
-  constructor (
-    private readonly fileStorage: IUploadFile,
-    private readonly crypto: IUUIDGenerator
-  ) {}
-
-  public async save ({ file, id }: IProfilePicture.Input): Promise<IProfilePicture.Output> {
-    await this.fileStorage.upload({
-      file,
-      key: this.crypto.uuid({
-        key: id
-      })
-    })
-  }
-}
-
-interface IUploadFile {
-  upload: (input: IUploadFile.Input) => Promise<void>
-}
-
-namespace IUploadFile {
-  export type Input = {
-    file: Buffer
-    key: string
-  }
-}
-
-interface IUUIDGenerator {
-  uuid: (input: IUUIDGenerator.Input) => IUUIDGenerator.Output
-}
-
-namespace IUUIDGenerator {
-  export type Input = {
-    key: string
-  }
-  export type Output = string
-}
+import { IUploadFile } from '@domain/contracts/gateways/file.storage'
+import { IUUIDGenerator } from '@domain/contracts/gateways'
+import { ChangeProfilePicture } from '@domain/useCases/change-profile-picture/change.profile.picture'
 
 describe('ChangeProfilePicture', () => {
   let uuid: string
