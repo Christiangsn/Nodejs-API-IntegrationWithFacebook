@@ -7,4 +7,7 @@ export default (router: Router): void => {
   const controller = makeFacebookLoginController()
   const adapter = new ExpressRouter(controller)
   router.post('/login/facebook', async (req, res) => adapter.adapt(req, res))
+  router.get('/abc', (req, res) => {
+    res.json({ a: 'teste' })
+  })
 }
