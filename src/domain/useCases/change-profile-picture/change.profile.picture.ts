@@ -9,11 +9,13 @@ export class ChangeProfilePicture implements IProfilePicture {
   ) {}
 
   public async save ({ file, id }: IProfilePicture.Input): Promise<IProfilePicture.Output> {
-    await this.fileStorage.upload({
-      file,
-      key: this.crypto.uuid({
-        key: id
+    if (file !== undefined) {
+      await this.fileStorage.upload({
+        file,
+        key: this.crypto.uuid({
+          key: id
+        })
       })
-    })
+    }
   }
 }

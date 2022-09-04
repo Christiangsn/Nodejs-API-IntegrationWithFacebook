@@ -6,7 +6,7 @@ export interface IProfilePicture {
 export namespace IProfilePicture {
   export type Input = {
     id: string
-    file: Buffer
+    file?: Buffer
   }
 
   export type Output = void

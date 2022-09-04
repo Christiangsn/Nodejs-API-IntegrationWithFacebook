@@ -25,4 +25,10 @@ describe('ChangeProfilePicture', () => {
     expect(fileStorage.upload).toHaveBeenCalledWith({ file, key: uuid })
     expect(fileStorage.upload).toHaveBeenCalledTimes(1)
   })
+
+  it('Should not call UploadFile when file is undefined', async () => {
+    await sut.save({ id: 'any_id', file: undefined as any })
+
+    expect(fileStorage.upload).not.toHaveBeenCalled()
+  })
 })
