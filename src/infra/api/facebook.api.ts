@@ -1,5 +1,5 @@
 import { IHttpGetClient } from '@infra/http'
-import { ILoadFacebookUserAPI } from '@data/contracts/facebook'
+import { ILoadFacebookUserAPI } from '@domain/contracts/facebook'
 
 type TAppToken = {
   access_token: string

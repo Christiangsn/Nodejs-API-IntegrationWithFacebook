@@ -1,4 +1,4 @@
-import { ILoudUserAccountRepository, ISaveFacebookAccountRepository } from '@data/contracts/repositories'
+import { ILoudUserAccountRepository, ISaveFacebookAccountRepository } from '@domain/contracts/repositories'
 
 import { getRepository } from 'typeorm'
 import { UserEntity } from '../entities'

@@ -18,8 +18,8 @@ module.exports = {
         '@presentation': './src/presentation',
         '@util': './src/util',
         '@data': './src/data',
-        '@damin': './src/main',
         '@main': './src/main',
+        '@domain': './src/domain',
         '@app': './src/app'
       }
     }],
