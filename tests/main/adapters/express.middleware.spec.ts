@@ -13,7 +13,8 @@ export class ExpressMiddleware {
   ) { }
 
   public async intercept (req: Request, res: Response, next: NextFunction): Promise<void> {
-    await this.expressMiddleware.handle({ ...req.headers })
+    const { statusCode, data } = await this.expressMiddleware.handle({ ...req.headers })
+    res.status(statusCode).json(data)
   }
 }
 
@@ -24,14 +25,17 @@ describe('ExpressMiddleware', () => {
   let middleware: MockProxy<Middleware>
   let sut: ExpressMiddleware
 
-  beforeAll(() => {
+  beforeEach(() => {
     req = getMockReq({ headers: { any: 'any' } })
     res = getMockRes().res
     next = getMockRes().next
-  })
-
-  beforeEach(() => {
     middleware = mock<Middleware>()
+    middleware.handle.mockResolvedValue({
+      statusCode: 500,
+      data: {
+        error: 'any_error'
+      }
+    })
     sut = new ExpressMiddleware(middleware)
   })
 
@@ -47,5 +51,16 @@ describe('ExpressMiddleware', () => {
     await sut.intercept(req, res, next)
     expect(middleware.handle).toHaveBeenCalledWith({})
     expect(middleware.handle).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should respond with correct error and statusCode', async () => {
+    await sut.intercept(req, res, next)
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.status).toHaveBeenCalledTimes(1)
+
+    expect(res.json).toHaveBeenCalledWith({
+      error: 'any_error'
+    })
+    expect(res.json).toHaveBeenCalledTimes(1)
   })
 })
