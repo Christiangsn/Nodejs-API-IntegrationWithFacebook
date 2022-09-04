@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { IHttpResponse } from '@app/helpers/http'
 import { getMockReq, getMockRes } from '@jest-mock/express'
 import { NextFunction, Response, Request } from 'express'
@@ -12,9 +13,14 @@ export class ExpressMiddleware {
     private readonly expressMiddleware: Middleware
   ) { }
 
-  public async intercept (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async intercept (req: Request, res: Response, next: NextFunction): Promise<void | Response> {
     const { statusCode, data } = await this.expressMiddleware.handle({ ...req.headers })
-    res.status(statusCode).json(data)
+    if (statusCode === 200) {
+      const entries = Object.entries(data).filter((entry) => entry[1])
+      req.locals = { ...req.locals, ...Object.fromEntries(entries) }
+      return next()
+    }
+    return res.status(statusCode).json(data)
   }
 }
 
@@ -31,9 +37,12 @@ describe('ExpressMiddleware', () => {
     next = getMockRes().next
     middleware = mock<Middleware>()
     middleware.handle.mockResolvedValue({
-      statusCode: 500,
+      statusCode: 200,
       data: {
-        error: 'any_error'
+        emptyProp: '',
+        nullProp: null,
+        undefinedProp: undefined,
+        prop: 'any_value'
       }
     })
     sut = new ExpressMiddleware(middleware)
@@ -54,6 +63,13 @@ describe('ExpressMiddleware', () => {
   })
 
   it('Should respond with correct error and statusCode', async () => {
+    middleware.handle.mockResolvedValueOnce({
+      statusCode: 500,
+      data: {
+        error: 'any_error'
+      }
+    })
+
     await sut.intercept(req, res, next)
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.status).toHaveBeenCalledTimes(1)
@@ -62,5 +78,13 @@ describe('ExpressMiddleware', () => {
       error: 'any_error'
     })
     expect(res.json).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should add valid data to req.locals', async () => {
+    await sut.intercept(req, res, next)
+    expect(req.locals).toEqual({
+      prop: 'any_value'
+    })
+    expect(next).toHaveBeenCalledTimes(1)
   })
 })
