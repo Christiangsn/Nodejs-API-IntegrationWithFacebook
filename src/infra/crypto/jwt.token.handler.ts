@@ -1,6 +1,6 @@
 import { ITokenGeneration } from '@domain/contracts/crypto'
 
-import { sign } from 'jsonwebtoken'
+import { sign, verify } from 'jsonwebtoken'
 
 export class JwtTokenHandler implements ITokenGeneration {
   constructor (
@@ -14,5 +14,9 @@ export class JwtTokenHandler implements ITokenGeneration {
     }, this.secret, { expiresIn: expirationInSeconds })
 
     return generationToken
+  }
+
+  public async validate ({ token }: { token: string}): Promise<void> {
+    verify(token, this.secret)
   }
 }
