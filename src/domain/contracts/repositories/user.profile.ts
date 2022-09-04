@@ -4,7 +4,7 @@ export interface ISaveUserPicture {
 
 export namespace ISaveUserPicture {
   export type Input = {
-    pictureUrl: string
+    pictureUrl?: string
   }
 
   export type Ouput = null

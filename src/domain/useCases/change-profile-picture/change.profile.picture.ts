@@ -11,14 +11,17 @@ export class ChangeProfilePicture implements IProfilePicture {
   ) {}
 
   public async save ({ file, id }: IProfilePicture.Input): Promise<IProfilePicture.Output> {
+    let pictureUrl: string | undefined
+
     if (file !== undefined) {
-      const pictureUrl = await this.fileStorage.upload({
+      pictureUrl = await this.fileStorage.upload({
         file,
         key: this.crypto.uuid({
           key: id
         })
       })
-      await this.profilePicture.savePicture({ pictureUrl })
     }
+
+    await this.profilePicture.savePicture({ pictureUrl })
   }
 }
