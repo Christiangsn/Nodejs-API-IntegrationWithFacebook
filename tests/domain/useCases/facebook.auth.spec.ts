@@ -1,5 +1,5 @@
 import { FacebookAccount } from '@domain/entities/facebook.entity'
-import { ILoadFacebookUserAPI } from '@domain/contracts/facebook'
+import { ILoadFacebookUser } from '@domain/contracts/gateways'
 import { ITokenGeneration } from '@domain/contracts/crypto'
 import { ISaveFacebookAccountRepository, ILoudUserAccountRepository } from '@domain/contracts/repositories'
 import { FacebookAuthenticationUseCases } from '@domain/useCases/facebook'
@@ -11,7 +11,7 @@ import { AccessToken } from '@domain/entities'
 jest.mock('@domain/entities/facebook.entity')
 
 describe('FacebookAuthenticationUseCase', () => {
-  let facebookAPI: MockProxy<ILoadFacebookUserAPI>
+  let facebookAPI: MockProxy<ILoadFacebookUser>
   let cryptography: MockProxy<ITokenGeneration>
   let userAccountRepository: MockProxy<ILoudUserAccountRepository & ISaveFacebookAccountRepository>
   let sut: FacebookAuthenticationUseCases
@@ -93,7 +93,7 @@ describe('FacebookAuthenticationUseCase', () => {
     expect(authResult).toEqual(new AccessToken('ANY_TOKEN_0001'))
   })
 
-  it('Should rethrow if ILoadFacebookUserAPI throws', async () => {
+  it('Should rethrow if ILoadFacebookUser throws', async () => {
     facebookAPI.generation.mockRejectedValueOnce(new Error('Facebook Error'))
     const promise = sut.execute({ token })
 

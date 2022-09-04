@@ -1,5 +1,5 @@
 import { IHttpGetClient } from '@infra/http'
-import { ILoadFacebookUserAPI } from '@domain/contracts/facebook'
+import { ILoadFacebookUser } from '@domain/contracts/gateways'
 
 type TAppToken = {
   access_token: string
@@ -17,7 +17,7 @@ type TFaceboookData = {
   email: string
 }
 
-export class FacebookAPI implements ILoadFacebookUserAPI {
+export class FacebookAPI implements ILoadFacebookUser {
   private readonly baseURL = 'https://graph.facebook.com'
 
   constructor (
@@ -26,7 +26,7 @@ export class FacebookAPI implements ILoadFacebookUserAPI {
     private readonly clientSecret: string
   ) { }
 
-  public async generation ({ token }: ILoadFacebookUserAPI.Params): Promise<ILoadFacebookUserAPI.Return> {
+  public async generation ({ token }: ILoadFacebookUser.Params): Promise<ILoadFacebookUser.Return> {
     return new Promise((resolve) => {
       this.getUserInfo(token)
         .then((userInfo) => {

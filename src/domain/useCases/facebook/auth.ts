@@ -1,6 +1,6 @@
 import { AccessToken, FacebookAccount } from '@domain/entities'
 
-import { ILoadFacebookUserAPI } from '@domain/contracts/facebook'
+import { ILoadFacebookUser } from '@domain/contracts/gateways'
 import { ITokenGeneration } from '@domain/contracts/crypto'
 import { ILoudUserAccountRepository, ISaveFacebookAccountRepository } from '@domain/contracts/repositories'
 import { IFacebookAuth } from '@domain/features'
@@ -8,7 +8,7 @@ import { TAuthenticationError } from '@domain/entities/error'
 
 export class FacebookAuthenticationUseCases implements IFacebookAuth {
   constructor (
-    private readonly loadFacebookUseByTokenAPI: ILoadFacebookUserAPI,
+    private readonly loadFacebookUseByTokenAPI: ILoadFacebookUser,
     private readonly userAccountRepository: ILoudUserAccountRepository & ISaveFacebookAccountRepository,
     private readonly cryptography: ITokenGeneration
   ) {}
