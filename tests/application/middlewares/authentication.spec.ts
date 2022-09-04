@@ -17,11 +17,15 @@ export class AuthenticationMiddleware {
   public async handle ({ authorization }: IHttpRequest): Promise<IHttpResponse<Error> | undefined> {
     const error = new RequiredStringValidator(authorization, 'authorization').validate()
 
-    if (error !== undefined) {
+    try {
+      if (error !== undefined) {
+        return Fobidden()
+      }
+
+      await this.authorize.auth({ token: authorization })
+    } catch (error) {
       return Fobidden()
     }
-
-    await this.authorize.auth({ token: authorization })
   }
 }
 
@@ -71,5 +75,15 @@ describe('AuthenticationMiddleware', () => {
 
     expect(authorize.auth).toHaveBeenCalledWith({ token: authorization })
     expect(authorize.auth).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should return 403 if authorize throws', async () => {
+    authorize.auth.mockRejectedValueOnce(new Error('any_error'))
+    const httpResponse = await sut.handle({ authorization })
+
+    expect(httpResponse).toEqual({
+      statusCode: 403,
+      data: new ForbiddenError()
+    })
   })
 })
