@@ -17,18 +17,19 @@ export class AuthenticationMiddleware {
   ) { }
 
   public async handle ({ authorization }: IHttpRequest): Promise<IHttpResponse<Model> > {
-    const error = new RequiredStringValidator(authorization, 'authorization').validate()
+    if (!this.validate({ authorization })) return Fobidden()
 
     try {
-      if (error !== undefined) {
-        return Fobidden()
-      }
-
       const userId = await this.authorize.auth({ token: authorization })
       return Success({ userId })
     } catch (error) {
       return Fobidden()
     }
+  }
+
+  private validate ({ authorization }: IHttpRequest): boolean {
+    const error = new RequiredStringValidator(authorization, 'authorization').validate()
+    return error === undefined
   }
 }
 
