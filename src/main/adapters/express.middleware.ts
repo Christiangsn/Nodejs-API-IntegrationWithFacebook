@@ -15,6 +15,6 @@ export class ExpressMiddleware {
       req.locals = { ...req.locals, ...Object.fromEntries(entries) }
       return next()
     }
-    return res.status(statusCode).json(data)
+    return res.status(statusCode).json({ error: data.message })
   }
 }
