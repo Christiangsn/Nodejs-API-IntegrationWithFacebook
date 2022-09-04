@@ -1,8 +1,8 @@
-import { ITokenGeneration } from '@domain/contracts/crypto'
+import { ITokenGeneration, ITokenValidator } from '@domain/contracts/crypto'
 
-import { sign, verify } from 'jsonwebtoken'
+import { JwtPayload, sign, verify } from 'jsonwebtoken'
 
-export class JwtTokenHandler implements ITokenGeneration {
+export class JwtTokenHandler implements ITokenGeneration, ITokenValidator {
   constructor (
     private readonly secret: string
   ) { }
@@ -16,7 +16,8 @@ export class JwtTokenHandler implements ITokenGeneration {
     return generationToken
   }
 
-  public async validate ({ token }: { token: string}): Promise<void> {
-    verify(token, this.secret)
+  public async validate ({ token }: ITokenValidator.Params): Promise<ITokenValidator.Return> {
+    const payload = verify(token, this.secret) as JwtPayload
+    return payload.key
   }
 }

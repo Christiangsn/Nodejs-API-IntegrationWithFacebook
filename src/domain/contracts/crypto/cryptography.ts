@@ -16,5 +16,6 @@ export interface ITokenValidator {
 }
 
 export namespace ITokenValidator {
-  export type Params = { token: string}
+  export type Params = { token: string }
+  export type Return = string
 }
