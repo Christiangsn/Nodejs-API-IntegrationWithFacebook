@@ -12,9 +12,9 @@ export namespace ITokenGeneration {
 }
 
 export interface ITokenValidator {
-    validate: (params: ITokenValidator.Params) => Promise<string>
+  validate: (params: ITokenValidator.Params) => Promise<string>
 }
 
 export namespace ITokenValidator {
-    export type Params = { token: string}
+  export type Params = { token: string}
 }

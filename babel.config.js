@@ -19,7 +19,6 @@ module.exports = {
         '@util': './src/util',
         '@data': './src/data',
         '@main': './src/main',
-        '@domain': './src/domain',
         '@app': './src/app'
       }
     }],
