@@ -1,3 +1,3 @@
 export interface IAuthorize {
-    auth: (params: { token: string }) => Promise<string>
+  auth: (params: { token: string }) => Promise<string>
 }

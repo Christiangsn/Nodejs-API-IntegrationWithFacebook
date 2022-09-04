@@ -33,5 +33,4 @@ describe('Authorized', () => {
 
     expect(userId).toBe('any_id')
   })
-
 })
