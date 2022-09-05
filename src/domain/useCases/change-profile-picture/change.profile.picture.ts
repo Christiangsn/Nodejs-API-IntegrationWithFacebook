@@ -12,6 +12,7 @@ export class ChangeProfilePicture implements IProfilePicture {
 
   public async save ({ file, id }: IProfilePicture.Input): Promise<IProfilePicture.Output> {
     let pictureUrl: string | undefined
+    let initials: string | undefined
 
     if (file !== undefined) {
       pictureUrl = await this.fileStorage.upload({
@@ -21,9 +22,21 @@ export class ChangeProfilePicture implements IProfilePicture {
         })
       })
     } else {
-      await this.profilePicture.load({ id })
+      // Pegar o name
+      const { name } = await this.profilePicture.load({ id })
+
+      // Verificar se o nome é vazio para pegar as iniciais para concatenar
+      if (name !== undefined) {
+        const firstLetters = name.match(/\b(.)/g) ?? [] // Pegar iniciais de cada palavra
+        // Se tiver nome e sobrenome
+        if (firstLetters.length > 1) {
+          initials = `${firstLetters.shift()?.toUpperCase() ?? ''}${firstLetters.pop()?.toUpperCase() ?? ''}`
+        } else { // se não pega as duas primeiras letras do nome
+          initials = name.substring(0, 2)?.toUpperCase() ?? ''
+        }
+      }
     }
 
-    await this.profilePicture.savePicture({ pictureUrl })
+    await this.profilePicture.savePicture({ pictureUrl, initials })
   }
 }
