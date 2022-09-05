@@ -9,3 +9,14 @@ export namespace ISaveUserPicture {
 
   export type Ouput = null
 }
+
+export interface ILoadUserProfile {
+  load: ({ id }: ILoadUserProfile.Input) => Promise<void>
+}
+
+export namespace ILoadUserProfile {
+  export type Input = {
+    id: string
+  }
+
+}
