@@ -20,9 +20,10 @@ export class ChangeProfilePicture implements IProfilePicture {
           key: id
         })
       })
+    } else {
+      await this.profilePicture.load({ id })
     }
 
     await this.profilePicture.savePicture({ pictureUrl })
-    await this.profilePicture.load({ id })
   }
 }
