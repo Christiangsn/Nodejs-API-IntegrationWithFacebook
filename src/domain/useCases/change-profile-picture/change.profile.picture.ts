@@ -32,9 +32,10 @@ export class ChangeProfilePicture implements IProfilePicture {
 
     try {
       await this.profilePicture.savePicture(userProfile)
-    } catch {
+    } catch (err) {
       if (file !== undefined) {
         await this.profilePicture.delete({ key })
+        // throw err
       }
     }
 
