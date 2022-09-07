@@ -31,5 +31,7 @@ export class ChangeProfilePicture implements IProfilePicture {
     const userProfile = new UserProfile(id)
     userProfile.setPicture({ pictureUrl, name })
     await this.profilePicture.savePicture(userProfile)
+
+    return userProfile
   }
 }

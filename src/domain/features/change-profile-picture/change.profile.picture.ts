@@ -1,3 +1,5 @@
+import { UserProfile } from '@domain/entities'
+
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 export interface IProfilePicture {
   save: (props: IProfilePicture.Input) => Promise<IProfilePicture.Output>
@@ -9,5 +11,5 @@ export namespace IProfilePicture {
     file?: Buffer
   }
 
-  export type Output = void
+  export type Output = UserProfile
 }
