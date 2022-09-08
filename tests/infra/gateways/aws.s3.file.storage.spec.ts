@@ -5,7 +5,7 @@ import { config, S3 } from 'aws-sdk'
 
 jest.mock('aws-sdk')
 
-class AwS3FileStorage {
+class AwS3FileStorage implements IUploadFile {
   constructor (
     public acessKey: string,
     public secret: string,
@@ -27,6 +27,8 @@ class AwS3FileStorage {
       Body: file,
       ACL: 'public-read'
     }).promise()
+
+    return `https://${this.bucket}.s3.amazonaws.com/${encodeURIComponent(key)}`
   }
 }
 
@@ -72,5 +74,31 @@ describe('AwS3FileStorage', () => {
     })
     expect(putObjectSpy).toHaveBeenCalledTimes(1)
     expect(putObjectPromiseSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should return imageUrl', async () => {
+    const putObjectPromiseSpy = jest.fn()
+    const putObjectSpy = jest.fn().mockImplementationOnce(() => ({ promise: putObjectPromiseSpy }))
+    jest.mocked(S3).mockImplementationOnce(jest.fn().mockImplementationOnce(() => {
+      return {
+        putObject: putObjectSpy
+      }
+    }))
+    const imageUrl = await sut.upload({ key, file })
+
+    expect(imageUrl).toBe(`https://${bucket}.s3.amazonaws.com/${key}`)
+  })
+
+  it('Should return encoded imageUrl', async () => {
+    const putObjectPromiseSpy = jest.fn()
+    const putObjectSpy = jest.fn().mockImplementationOnce(() => ({ promise: putObjectPromiseSpy }))
+    jest.mocked(S3).mockImplementationOnce(jest.fn().mockImplementationOnce(() => {
+      return {
+        putObject: putObjectSpy
+      }
+    }))
+    const imageUrl = await sut.upload({ key: 'any key', file })
+
+    expect(imageUrl).toBe(`https://${bucket}.s3.amazonaws.com/any%20key`)
   })
 })
