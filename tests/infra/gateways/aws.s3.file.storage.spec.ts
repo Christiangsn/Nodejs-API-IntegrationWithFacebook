@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 import { IUploadFile } from '@domain/contracts/gateways/file.storage'
@@ -100,5 +101,21 @@ describe('AwS3FileStorage', () => {
     const imageUrl = await sut.upload({ key: 'any key', file })
 
     expect(imageUrl).toBe(`https://${bucket}.s3.amazonaws.com/any%20key`)
+  })
+
+  it('Should retrow if putObject throws', async () => {
+    const putObjectPromiseSpy = jest.fn()
+    const putObjectSpy = jest.fn().mockImplementationOnce(() => ({ promise: putObjectPromiseSpy }))
+    jest.mocked(S3).mockImplementationOnce(jest.fn().mockImplementationOnce(() => {
+      return {
+        putObject: putObjectSpy
+      }
+    }))
+
+    const error = new Error('Error File')
+    putObjectPromiseSpy.mockRejectedValueOnce(error)
+    const promise = sut.upload({ key, file })
+
+    expect(promise).rejects.toThrow(error)
   })
 })
