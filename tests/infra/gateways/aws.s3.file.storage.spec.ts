@@ -1,37 +1,10 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-extraneous-class */
-import { IUploadFile } from '@domain/contracts/gateways/file.storage'
+import { AwS3FileStorage } from '@infra/gateways/aw.s3.fileStorage'
 import { config, S3 } from 'aws-sdk'
 
 jest.mock('aws-sdk')
-
-class AwS3FileStorage implements IUploadFile {
-  constructor (
-    public acessKey: string,
-    public secret: string,
-    private readonly bucket: string
-  ) {
-    config.update({
-      credentials: {
-        accessKeyId: acessKey,
-        secretAccessKey: secret
-      }
-    })
-  }
-
-  public async upload ({ key, file }: IUploadFile.Input) {
-    const s3 = new S3()
-    await s3.putObject({
-      Bucket: this.bucket,
-      Key: key,
-      Body: file,
-      ACL: 'public-read'
-    }).promise()
-
-    return `https://${this.bucket}.s3.amazonaws.com/${encodeURIComponent(key)}`
-  }
-}
 
 describe('AwS3FileStorage', () => {
   const acessKey = 'any_access_key'
