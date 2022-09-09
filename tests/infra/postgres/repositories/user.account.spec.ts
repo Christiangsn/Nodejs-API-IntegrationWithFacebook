@@ -61,7 +61,7 @@ describe('UserAccountRepository', () => {
       const user = await userRepository.findOne({ id: 1 })
 
       // Garantir que o ID seja o mesmo que foi inserido e retorne o id na request da classe
-      expect(user).toEqual({ id: 1, email: 'any_email', name: 'new_name', facebookId: 'new_fb_id' })
+      expect(user).toMatchObject({ id: 1, email: 'any_email', name: 'new_name', facebookId: 'new_fb_id' })
       expect(id).toBe(1)
     })
   })

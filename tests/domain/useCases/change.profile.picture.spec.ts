@@ -12,7 +12,7 @@ describe('ChangeProfilePicture', () => {
   let file: Buffer
   let fileStorage: MockProxy<IUploadFile & IDeleteFile>
   let crypto: MockProxy<IUUIDGenerator>
-  let userProfileRepository: MockProxy<ISaveUserPicture & ILoadUserProfile & IDeleteFile>
+  let userProfileRepository: MockProxy<ISaveUserPicture & ILoadUserProfile>
   let sut: ChangeProfilePicture
 
   beforeEach(() => {

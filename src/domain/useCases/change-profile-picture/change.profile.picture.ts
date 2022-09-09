@@ -7,9 +7,9 @@ import { IProfilePicture } from '@domain/features/change-profile-picture/change.
 
 export class ChangeProfilePicture implements IProfilePicture {
   constructor (
-    private readonly fileStorage: IUploadFile,
+    private readonly fileStorage: IUploadFile & IDeleteFile,
     private readonly crypto: IUUIDGenerator,
-    private readonly profilePicture: ISaveUserPicture & ILoadUserProfile & IDeleteFile
+    private readonly profilePicture: ISaveUserPicture & ILoadUserProfile
   ) {}
 
   public async save ({ file, id }: IProfilePicture.Input): Promise<IProfilePicture.Output> {
@@ -34,7 +34,7 @@ export class ChangeProfilePicture implements IProfilePicture {
       await this.profilePicture.savePicture(userProfile)
     } catch (err) {
       if (file !== undefined) {
-        await this.profilePicture.delete({ key })
+        await this.fileStorage.delete({ key })
         // throw err
       }
     }
