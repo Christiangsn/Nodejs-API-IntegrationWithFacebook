@@ -1,3 +1,4 @@
+import { Controller } from '@app/controllers/controller'
 import { AccessToken } from '@domain/entities'
 import { TAuthenticationError } from '@domain/entities/error'
 import { IFacebookAuth } from '@domain/features'
@@ -23,6 +24,10 @@ describe('FacebookLoginController', () => {
     jest.clearAllMocks()
 
     sut = new FacebookLoginController(FacebookAuthenticationUseCases)
+  })
+
+  it('Should extend Controler', async () => {
+    expect(sut).toBeInstanceOf(Controller)
   })
 
   // Se o token do facebook for vazio
