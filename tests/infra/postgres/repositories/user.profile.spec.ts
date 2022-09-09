@@ -47,4 +47,19 @@ describe('UserAccountRepository', () => {
       })
     })
   })
+
+  describe('savePicture', () => {
+    it('Should load user profile', async () => {
+      const { id } = await userRepository.save({
+        email: 'any_email',
+        name: 'any_name'
+      })
+
+      const userProfile = await sut.load({
+        id: id.toString()
+      })
+
+      expect(userProfile?.name).toBe('any_name')
+    })
+  })
 })
