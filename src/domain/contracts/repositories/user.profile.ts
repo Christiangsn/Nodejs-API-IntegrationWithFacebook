@@ -22,5 +22,5 @@ export namespace ILoadUserProfile {
   }
   export type Output = {
     name?: string
-  }
+  } | undefined
 }

@@ -24,7 +24,7 @@ export class ChangeProfilePicture implements IProfilePicture {
       pictureUrl = await this.fileStorage.upload({ file, key })
     } else {
       // Pegar o name
-      name = (await this.profilePicture.load({ id })).name
+      name = (await this.profilePicture.load({ id }))?.name
     }
 
     const userProfile = new UserProfile(id)

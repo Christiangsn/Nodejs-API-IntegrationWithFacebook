@@ -58,6 +58,23 @@ describe('ChangeProfilePicture', () => {
     expect(userProfileRepository.savePicture).toHaveBeenCalledTimes(1)
   })
 
+  it('Should call SaveUserPicture with correct input', async () => {
+    const mockMethod = jest.fn()
+    const setPicture = jest.fn().mockImplementation(() => {
+      return {
+        setPicture: mockMethod
+      }
+    })
+
+    userProfileRepository.load.mockResolvedValueOnce(undefined)
+    jest.mocked(UserProfile).mockImplementation(setPicture)
+
+    await sut.save({ id: 'any_id', file })
+
+    expect(userProfileRepository.savePicture).toHaveBeenCalled()
+    expect(userProfileRepository.savePicture).toHaveBeenCalledTimes(1)
+  })
+
   it('Should call LoadUserProfile with correct input', async () => {
     await sut.save({ id: 'any_id', file: undefined })
 
