@@ -1,7 +1,5 @@
 import { MaxFileSizeError } from './../../../src/app/errors/validators/validator.max.file.size'
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { InvalidMymeTypeError } from '@app/errors/validators/validator.invalid.mime.type'
-import { AllowedMimeTypes, MaxFileSize } from '@app/validators'
+import { MaxFileSize } from '@app/validators'
 
 describe('AllowedMimeTypes', () => {
   it('Should return InvalidMymeTypeError if value is invalid', () => {
