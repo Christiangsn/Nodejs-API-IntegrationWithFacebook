@@ -1,32 +1,25 @@
 import { RequiredFieldError } from '@app/errors/http'
-import { RequiredStringValidator } from '@app/validators'
+import { Required } from '@app/validators'
+import { RequiredString } from '@app/validators/required.string'
 
-describe('RequiredStringValidator', () => {
+describe('RequiredString', () => {
   it('Should return RequiredFieldError if value is empty', () => {
-    const sut = new RequiredStringValidator('', 'any_field')
-
-    const error = sut.validate()
-    expect(error).toEqual(new RequiredFieldError('any_field'))
-  })
-
-  it('Should return RequiredFieldError if value is null', () => {
-    const sut = new RequiredStringValidator(null as any, 'any_field')
-
-    const error = sut.validate()
-    expect(error).toEqual(new RequiredFieldError('any_field'))
-  })
-
-  it('Should return RequiredFieldError if value is undefined', () => {
-    const sut = new RequiredStringValidator(undefined as any, 'any_field')
+    const sut = new RequiredString('', 'any_field')
 
     const error = sut.validate()
     expect(error).toEqual(new RequiredFieldError('any_field'))
   })
 
   it('Should return undefined if value is not undefined', () => {
-    const sut = new RequiredStringValidator('anuy_value', 'any_field')
+    const sut = new RequiredString('anuy_value', 'any_field')
 
     const error = sut.validate()
     expect(error).toBeUndefined()
+  })
+
+  it('Should extends Required', () => {
+    const sut = new RequiredString('')
+
+    expect(sut).toBeInstanceOf(Required)
   })
 })

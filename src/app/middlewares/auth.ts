@@ -1,6 +1,6 @@
 import { IHttpResponse } from '@app/helpers/http'
 import { Fobidden, Success } from '@app/helpers/responses'
-import { RequiredStringValidator } from '@app/validators'
+import { RequiredString } from '@app/validators'
 import { IAuthorize } from '@domain/features/auth'
 import { IMiddleware } from './middleware'
 
@@ -24,7 +24,7 @@ export class AuthenticationMiddleware implements IMiddleware {
   }
 
   private validate ({ authorization }: IHttpRequest): boolean {
-    const error = new RequiredStringValidator(authorization, 'authorization').validate()
+    const error = new RequiredString(authorization, 'authorization').validate()
     return error === undefined
   }
 }

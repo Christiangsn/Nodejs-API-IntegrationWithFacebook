@@ -5,7 +5,7 @@ import { IFacebookAuth } from '@domain/features'
 import { mock, MockProxy } from 'jest-mock-extended'
 import { FacebookLoginController } from '@app/controllers/facebook/facebook.login'
 import { AnauthorizedError } from '@app/errors/http/http.anauthorized'
-import { RequiredStringValidator } from '@app/validators'
+import { RequiredString } from '@app/validators'
 
 describe('FacebookLoginController', () => {
   let FacebookAuthenticationUseCases: MockProxy<IFacebookAuth>
@@ -35,7 +35,7 @@ describe('FacebookLoginController', () => {
     const validators = sut.builderValidators({ token })
 
     expect(validators).toEqual([
-      new RequiredStringValidator('any_token', 'token')
+      new RequiredString('any_token', 'token')
     ])
   })
 
