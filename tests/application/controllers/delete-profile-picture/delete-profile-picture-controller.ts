@@ -1,23 +1,7 @@
 import { Controller } from '@app/controllers/controller'
-import { IHttpResponse } from '@app/helpers/http'
-import { NoContent } from '@app/helpers/responses/no.content'
+import { DeletePictureController } from '@app/controllers/delete-profile-picture/delete-profile-picture'
 import { IProfilePicture } from '@domain/features/change-profile-picture/change.profile.picture'
 import { mock, MockProxy } from 'jest-mock-extended'
-
-type HttpRequest = { userId: string }
-
-class DeletePictureController extends Controller {
-  constructor (
-    private readonly changeProfilePicture: IProfilePicture
-  ) {
-    super()
-  }
-
-  public async execute ({ userId }: HttpRequest): Promise<IHttpResponse> {
-    await this.changeProfilePicture.save({ id: userId })
-    return NoContent()
-  }
-}
 
 describe('Should call ChangeProfile with corrrect input', () => {
   let changeProfilePicture: MockProxy<IProfilePicture>
