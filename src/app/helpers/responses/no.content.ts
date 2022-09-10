@@ -1,6 +1,6 @@
 import { IHttpResponse } from '../http'
 
 export const NoContent = (): IHttpResponse => ({
-  statusCode: 400,
+  statusCode: 204,
   data: null
 })
