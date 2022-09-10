@@ -3,6 +3,7 @@ import { IHttpResponse } from '@app/helpers/http/index'
 import { RequiredFieldError } from '@app/errors/http/http.required.filed'
 import { mock, MockProxy } from 'jest-mock-extended'
 import { IProfilePicture } from '@domain/features/change-profile-picture/change.profile.picture'
+import { Success } from '@app/helpers/responses'
 
 type HttpRequest = {
   file: {
@@ -12,14 +13,14 @@ type HttpRequest = {
   userId: string
 }
 
-type Model = Error
+type Model = Error | { initials?: string, pictureUrl?: string }
 
 export class SavePictureController {
   constructor (
     private readonly changeProfilePicture: IProfilePicture
   ) { }
 
-  public async execute ({ file, userId }: HttpRequest): Promise<IHttpResponse<Model> | undefined> {
+  public async execute ({ file, userId }: HttpRequest): Promise<IHttpResponse<Model>> {
     if (file === undefined || file === null) {
       return BadRequest(new RequiredFieldError('file'))
     }
@@ -36,7 +37,9 @@ export class SavePictureController {
       return BadRequest(new MaxFileSizeError(5))
     }
 
-    await this.changeProfilePicture.save({ id: userId, file: file.buffer })
+    const data = await this.changeProfilePicture.save({ id: userId, file: file.buffer })
+
+    return Success(data)
   }
 }
 
@@ -78,6 +81,10 @@ describe('SavePictureController', () => {
     }
     userId = 'any_user_id'
     ChangeProfilePicture = mock()
+    ChangeProfilePicture.save.mockRejectedValue({
+      initials: 'any_initials',
+      pictureUrl: 'any_picture_url'
+    })
   })
 
   it('Should return 400 if file is not provided', async () => {
@@ -200,4 +207,20 @@ describe('SavePictureController', () => {
     })
     expect(ChangeProfilePicture).toHaveBeenCalledTimes(1)
   })
+
+  it('Should return 200 with valid data', async () => {
+    const httpResponse = await sut.execute({
+      file, userId
+    })
+
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      data: {
+        initials: 'any_initials',
+        pictureUrl: 'any_picture_url'
+      }
+    })
+  })
 })
+
+// { pictureUrl?: string, initials?: string }
