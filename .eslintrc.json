@@ -8,6 +8,7 @@
         "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/return-await": "off",
         "@typescript-eslint/strict-boolean-expressions": "off",
-        "@typescript-eslint/prefer-nullish-coalescing": "off"
+        "@typescript-eslint/prefer-nullish-coalescing": "off",
+        "no-extra-boolean-cast": "off"
     }
 }
