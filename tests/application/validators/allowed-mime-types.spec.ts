@@ -8,8 +8,10 @@ class AllowedMimeTypes {
     private readonly mimeType: string
   ) {}
 
-  public validate (): Error {
-    return new InvalidMymeTypeError(this.allowed)
+  public validate (): Error | undefined {
+    if (this.allowed.includes('png') && this.mimeType !== 'image/png') {
+      return new InvalidMymeTypeError(this.allowed)
+    }
   }
 }
 
@@ -19,5 +21,12 @@ describe('AllowedMimeTypes', () => {
     const error = sut.validate()
 
     expect(error).toEqual(new InvalidMymeTypeError(['png']))
+  })
+
+  it('Should return undefined if value is valid', () => {
+    const sut = new AllowedMimeTypes(['png'], 'image/png')
+    const error = sut.validate()
+
+    expect(error).toBeUndefined()
   })
 })
