@@ -1,61 +1,9 @@
-import { BadRequest } from '@app/helpers/responses/bad.request'
-import { IHttpResponse } from '@app/helpers/http/index'
+
 import { RequiredFieldError } from '@app/errors/http/http.required.filed'
 import { mock, MockProxy } from 'jest-mock-extended'
 import { IProfilePicture } from '@domain/features/change-profile-picture/change.profile.picture'
-import { Success } from '@app/helpers/responses'
-
-type HttpRequest = {
-  file: {
-    buffer: Buffer
-    mimeType: string
-  }
-  userId: string
-}
-
-type Model = Error | { initials?: string, pictureUrl?: string }
-
-export class SavePictureController {
-  constructor (
-    private readonly changeProfilePicture: IProfilePicture
-  ) { }
-
-  public async execute ({ file, userId }: HttpRequest): Promise<IHttpResponse<Model>> {
-    if (file === undefined || file === null) {
-      return BadRequest(new RequiredFieldError('file'))
-    }
-
-    if (!!file.buffer.length) {
-      return BadRequest(new RequiredFieldError('file'))
-    }
-
-    if (['image/png', 'image/jpeg', 'image/jpg'].includes(file.mimeType)) {
-      return BadRequest(new InvalidMymeTypeError(['png', 'jpg', 'jpeg']))
-    }
-
-    if (file.buffer.length > 5 * 1024 * 1024) {
-      return BadRequest(new MaxFileSizeError(5))
-    }
-
-    const data = await this.changeProfilePicture.save({ id: userId, file: file.buffer })
-
-    return Success(data)
-  }
-}
-
-export class InvalidMymeTypeError extends Error {
-  constructor (public allowed: string[]) {
-    super(`Unsupported type. Allowed types: ${allowed.join(', ')} `)
-    this.name = 'Unsupported type'
-  }
-}
-
-export class MaxFileSizeError extends Error {
-  constructor (public maxSizeInMb: number) {
-    super(`File upload limit is ${maxSizeInMb}MB`)
-    this.name = 'Unsupported type'
-  }
-}
+import { InvalidMymeTypeError, MaxFileSizeError } from '@app/errors'
+import { SavePictureController } from '@app/controllers/save-profile-picture/save-profile-picture-controller'
 
 describe('SavePictureController', () => {
   let buffer: Buffer
@@ -222,5 +170,3 @@ describe('SavePictureController', () => {
     })
   })
 })
-
-// { pictureUrl?: string, initials?: string }
