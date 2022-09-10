@@ -1,5 +1,5 @@
 import { IProfilePicture } from '@domain/features/change-profile-picture/change.profile.picture'
-import { mock } from 'jest-mock-extended'
+import { mock, MockProxy } from 'jest-mock-extended'
 
 type HttpRequest = { userId: string }
 
@@ -14,10 +14,18 @@ class DeletePictureController {
 }
 
 describe('Should call ChangeProfile with corrrect input', () => {
-  it('Should call ChangeProfile with corrrect input', async () => {
-    const changeProfilePicture = mock<IProfilePicture>()
-    const sut = new DeletePictureController(changeProfilePicture)
+  let changeProfilePicture: MockProxy<IProfilePicture>
+  let sut: DeletePictureController
 
+  beforeAll(() => {
+    changeProfilePicture = mock()
+  })
+
+  beforeEach(() => {
+    sut = new DeletePictureController(changeProfilePicture)
+  })
+
+  it('Should call ChangeProfile with corrrect input', async () => {
     await sut.execute({ userId: 'any_user_id' })
     expect(changeProfilePicture.save).toHaveBeenCalledWith({ id: 'any_user_id' })
   })
