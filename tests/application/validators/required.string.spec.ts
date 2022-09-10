@@ -1,6 +1,6 @@
 import { RequiredFieldError } from '@app/errors/http'
 import { Required } from '@app/validators'
-import { RequiredString } from '@app/validators/required.string'
+import { RequiredString } from '@app/validators/required/required.string'
 
 describe('RequiredString', () => {
   it('Should return RequiredFieldError if value is empty', () => {

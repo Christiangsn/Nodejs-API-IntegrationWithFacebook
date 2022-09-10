@@ -1,6 +1,6 @@
+import { RequiredString } from '@app/validators'
 
-import { RequiredString } from './required.string'
-import { Validator } from './validator'
+import { Validator } from '../contracts/validator'
 
 export class ValidationBuilder {
   private constructor (

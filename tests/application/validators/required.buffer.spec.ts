@@ -17,7 +17,7 @@ describe('RequiredBuffer', () => {
   })
 
   it('Should extends Required', () => {
-    const sut = new RequiredBuffer('')
+    const sut = new RequiredBuffer(Buffer.from(''))
 
     expect(sut).toBeInstanceOf(Required)
   })

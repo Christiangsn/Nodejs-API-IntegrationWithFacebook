@@ -1,5 +1,5 @@
 import { RequiredFieldError } from '@app/errors/http'
-import { Validator } from './validator'
+import { Validator } from '../contracts/validator'
 
 export class Required implements Validator {
   constructor (

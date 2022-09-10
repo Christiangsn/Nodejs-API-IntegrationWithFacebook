@@ -3,7 +3,7 @@ import { ValidationComposite } from '@app/validators'
 import { Controller } from '@app/controllers/controller'
 import { IHttpResponse } from '@app/helpers/http'
 
-jest.mock('@app/validators/composite')
+jest.mock('@app/validators/controllers/composite')
 
 class ControlerStub extends Controller {
   public result: IHttpResponse = {
