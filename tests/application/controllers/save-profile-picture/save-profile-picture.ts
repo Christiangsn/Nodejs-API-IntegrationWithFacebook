@@ -1,18 +1,25 @@
 import { BadRequest } from '@app/helpers/responses/bad.request'
 import { IHttpResponse } from '@app/helpers/http/index'
 import { RequiredFieldError } from '@app/errors/http/http.required.filed'
+import { mock, MockProxy } from 'jest-mock-extended'
+import { IProfilePicture } from '@domain/features/change-profile-picture/change.profile.picture'
 
 type HttpRequest = {
   file: {
     buffer: Buffer
     mimeType: string
   }
+  userId: string
 }
 
 type Model = Error
 
 export class SavePictureController {
-  public async execute ({ file }: HttpRequest): Promise<IHttpResponse<Model> | undefined> {
+  constructor (
+    private readonly changeProfilePicture: IProfilePicture
+  ) { }
+
+  public async execute ({ file, userId }: HttpRequest): Promise<IHttpResponse<Model> | undefined> {
     if (file === undefined || file === null) {
       return BadRequest(new RequiredFieldError('file'))
     }
@@ -28,6 +35,8 @@ export class SavePictureController {
     if (file.buffer.length > 5 * 1024 * 1024) {
       return BadRequest(new MaxFileSizeError(5))
     }
+
+    await this.changeProfilePicture.save({ id: userId, file: file.buffer })
   }
 }
 
@@ -48,26 +57,31 @@ export class MaxFileSizeError extends Error {
 describe('SavePictureController', () => {
   let buffer: Buffer
   let mimeType: string
-  //   let file: {
-  //     buffer: Buffer,
-  //     mimeType: string
-  //   }
+  let userId: string
+  let file: {
+    buffer: Buffer
+    mimeType: string
+  }
   let sut: SavePictureController
+  let ChangeProfilePicture: MockProxy<IProfilePicture>
 
   beforeEach(() => {
-    sut = new SavePictureController()
+    sut = new SavePictureController(ChangeProfilePicture)
   })
 
   beforeAll(() => {
     buffer = Buffer.from('any_buffer')
     mimeType = 'image/png'
-    // file = {
-    //     buffer
-    // }
+    file = {
+      buffer,
+      mimeType
+    }
+    userId = 'any_user_id'
+    ChangeProfilePicture = mock()
   })
 
   it('Should return 400 if file is not provided', async () => {
-    const httpResponse = await sut.execute({ file: undefined as any })
+    const httpResponse = await sut.execute({ file: undefined as any, userId })
 
     expect(httpResponse).toEqual({
       statusCode: 400,
@@ -76,7 +90,7 @@ describe('SavePictureController', () => {
   })
 
   it('Should return 400 if file is null', async () => {
-    const httpResponse = await sut.execute({ file: null as any })
+    const httpResponse = await sut.execute({ file: null as any, userId })
 
     expect(httpResponse).toEqual({
       statusCode: 400,
@@ -89,7 +103,8 @@ describe('SavePictureController', () => {
       file: {
         buffer: Buffer.from(''),
         mimeType
-      }
+      },
+      userId
     })
 
     expect(httpResponse).toEqual({
@@ -103,7 +118,8 @@ describe('SavePictureController', () => {
       file: {
         buffer,
         mimeType: 'invalid_type'
-      }
+      },
+      userId
     })
 
     expect(httpResponse).toEqual({
@@ -117,7 +133,8 @@ describe('SavePictureController', () => {
       file: {
         buffer,
         mimeType: 'image/png'
-      }
+      },
+      userId
     })
 
     expect(httpResponse).not.toEqual({
@@ -131,7 +148,8 @@ describe('SavePictureController', () => {
       file: {
         buffer,
         mimeType: 'image/jpeg'
-      }
+      },
+      userId
     })
 
     expect(httpResponse).not.toEqual({
@@ -145,7 +163,8 @@ describe('SavePictureController', () => {
       file: {
         buffer,
         mimeType: 'image/jpg'
-      }
+      },
+      userId
     })
 
     expect(httpResponse).not.toEqual({
@@ -160,12 +179,25 @@ describe('SavePictureController', () => {
       file: {
         buffer: invalidBuffer,
         mimeType
-      }
+      },
+      userId
     })
 
     expect(httpResponse).not.toEqual({
       statusCode: 400,
       data: new MaxFileSizeError(5)
     })
+  })
+
+  it('Should call ChangeProfilePicture with correct input', async () => {
+    await sut.execute({
+      file, userId
+    })
+
+    expect(ChangeProfilePicture).toHaveBeenCalledWith({
+      id: userId,
+      file: buffer
+    })
+    expect(ChangeProfilePicture).toHaveBeenCalledTimes(1)
   })
 })
