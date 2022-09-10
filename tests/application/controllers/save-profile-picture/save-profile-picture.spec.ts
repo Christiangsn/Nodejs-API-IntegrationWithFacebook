@@ -4,6 +4,7 @@ import { mock, MockProxy } from 'jest-mock-extended'
 import { IProfilePicture } from '@domain/features/change-profile-picture/change.profile.picture'
 import { InvalidMymeTypeError, MaxFileSizeError } from '@app/errors'
 import { SavePictureController } from '@app/controllers/save-profile-picture/save-profile-picture-controller'
+import { Controller } from '@app/controllers/controller'
 
 describe('SavePictureController', () => {
   let buffer: Buffer
@@ -14,10 +15,15 @@ describe('SavePictureController', () => {
     mimeType: string
   }
   let sut: SavePictureController
-  let ChangeProfilePicture: MockProxy<IProfilePicture>
+  let changeProfilePicture: MockProxy<IProfilePicture>
 
   beforeEach(() => {
-    sut = new SavePictureController(ChangeProfilePicture)
+    changeProfilePicture = mock()
+    changeProfilePicture.save.mockResolvedValue({
+      initials: 'any_initials',
+      pictureUrl: 'any_picture_url'
+    })
+    sut = new SavePictureController(changeProfilePicture)
   })
 
   beforeAll(() => {
@@ -28,11 +34,6 @@ describe('SavePictureController', () => {
       mimeType
     }
     userId = 'any_user_id'
-    ChangeProfilePicture = mock()
-    ChangeProfilePicture.save.mockRejectedValue({
-      initials: 'any_initials',
-      pictureUrl: 'any_picture_url'
-    })
   })
 
   it('Should return 400 if file is not provided', async () => {
@@ -87,21 +88,6 @@ describe('SavePictureController', () => {
     const httpResponse = await sut.execute({
       file: {
         buffer,
-        mimeType: 'image/png'
-      },
-      userId
-    })
-
-    expect(httpResponse).not.toEqual({
-      statusCode: 400,
-      data: new InvalidMymeTypeError(['png', 'jpg', 'jpeg'])
-    })
-  })
-
-  it('Should not return 400 if file type is invalid', async () => {
-    const httpResponse = await sut.execute({
-      file: {
-        buffer,
         mimeType: 'image/jpeg'
       },
       userId
@@ -138,7 +124,7 @@ describe('SavePictureController', () => {
       userId
     })
 
-    expect(httpResponse).not.toEqual({
+    expect(httpResponse).toEqual({
       statusCode: 400,
       data: new MaxFileSizeError(5)
     })
@@ -149,11 +135,11 @@ describe('SavePictureController', () => {
       file, userId
     })
 
-    expect(ChangeProfilePicture).toHaveBeenCalledWith({
+    expect(changeProfilePicture.save).toHaveBeenCalledWith({
       id: userId,
-      file: buffer
+      file: file.buffer
     })
-    expect(ChangeProfilePicture).toHaveBeenCalledTimes(1)
+    expect(changeProfilePicture.save).toHaveBeenCalledTimes(1)
   })
 
   it('Should return 200 with valid data', async () => {
@@ -168,5 +154,9 @@ describe('SavePictureController', () => {
         pictureUrl: 'any_picture_url'
       }
     })
+  })
+
+  it('Should extend Controler', async () => {
+    expect(sut).toBeInstanceOf(Controller)
   })
 })
