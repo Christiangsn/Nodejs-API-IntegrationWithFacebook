@@ -5,7 +5,7 @@ import { IProfilePicture } from '@domain/features/change-profile-picture/change.
 import { Controller } from '../controller'
 
 type HttpRequest = {
-  file: {
+  file?: {
     buffer: Buffer
     mimeType: string
   }
@@ -22,12 +22,13 @@ export class SavePictureController extends Controller {
   }
 
   override builderValidators ({ file }: HttpRequest): Validator[] {
+    if (file === undefined) return []
     return [...Builder.of({ value: file, fieldName: 'file' }).required().image({ allowed: ['png', 'jpg'], maxSizeInMb: 5 }).build()]
   }
 
   public async execute ({ file, userId }: HttpRequest): Promise<IHttpResponse<Model>> {
-    const data = await this.changeProfilePicture.save({ id: userId, file })
+    const { initials, pictureUrl } = await this.changeProfilePicture.save({ id: userId, file })
 
-    return Success(data)
+    return Success({ initials, pictureUrl })
   }
 }

@@ -3,6 +3,7 @@ import { IProfilePicture } from '@domain/features/change-profile-picture/change.
 
 import { SavePictureController } from '@app/controllers/save-profile-picture/save-profile-picture-controller'
 import { Controller } from '@app/controllers/controller'
+import { AllowedMimeTypes, MaxFileSize, Required, RequiredBuffer } from '@app/validators'
 
 describe('SavePictureController', () => {
   let buffer: Buffer
@@ -34,16 +35,22 @@ describe('SavePictureController', () => {
     userId = 'any_user_id'
   })
 
-  //   it('should build validators correctly', async () => {
-  //     const validators = sut.builderValidators({ file, userId })
+  it('should build validators correctly on save', async () => {
+    const validators = sut.builderValidators({ file, userId })
 
-  //     expect(validators).toEqual([
-  //       new Required(file, ''),
-  //       new RequiredBuffer(buffer, 'file'),
-  //       new AllowedMimeTypes(['jpeg', 'png'], mimeType),
-  //       new MaxFileSize(5, buffer)
-  //     ])
-  //   })
+    expect(validators).toEqual([
+      new Required(file, 'file'),
+      new RequiredBuffer(buffer, 'file'),
+      new AllowedMimeTypes(['png', 'jpg'], mimeType),
+      new MaxFileSize(5, buffer)
+    ])
+  })
+
+  it('should build validators correctly on delete', async () => {
+    const validators = sut.builderValidators({ file: undefined, userId })
+
+    expect(validators).toEqual([])
+  })
 
   it('Should call ChangeProfilePicture with correct input', async () => {
     await sut.execute({

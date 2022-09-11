@@ -39,9 +39,10 @@ describe('User Routes', () => {
       expect(status).toBe(403)
     })
 
-    it('Should return 204', async () => {
+    it('Should return 200 with valid data', async () => {
       const { id } = await userRepository.save({
-        email: 'any_email'
+        email: 'any_email',
+        name: 'Christian Guimaraes dos santos'
       })
 
       const authorization = sign({ key: id }, env.jwtSecret)
@@ -50,8 +51,8 @@ describe('User Routes', () => {
         .delete('/api/users/picture')
         .set({ authorization })
 
-      expect(status).toBe(204)
-      expect(body).toEqual({})
+      expect(status).toBe(200)
+      expect(body).toEqual({ initials: 'CS', pictureUrl: undefined })
     })
   })
 })
