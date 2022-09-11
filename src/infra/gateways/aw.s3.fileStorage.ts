@@ -9,7 +9,6 @@ export class AwsS3FileStorage implements IUploadFile, IDeleteFile {
     private readonly bucket: string
   ) {
     config.update({
-      region: 'sa-east-1',
       credentials: {
         accessKeyId: acessKey,
         secretAccessKey: secret
@@ -17,23 +16,23 @@ export class AwsS3FileStorage implements IUploadFile, IDeleteFile {
     })
   }
 
-  public async delete ({ key }: IDeleteFile.Input): Promise<void> {
+  public async delete ({ fileName }: IDeleteFile.Input): Promise<void> {
     const s3 = new S3()
     await s3.deleteObject({
       Bucket: this.bucket,
-      Key: key
+      Key: fileName
     }).promise()
   }
 
-  public async upload ({ key, file }: IUploadFile.Input): Promise<IUploadFile.Output> {
+  public async upload ({ fileName, file }: IUploadFile.Input): Promise<IUploadFile.Output> {
     const s3 = new S3()
     await s3.putObject({
       Bucket: this.bucket,
-      Key: key,
+      Key: fileName,
       Body: file,
       ACL: 'public-read'
     }).promise()
 
-    return `https://${this.bucket}.s3.amazonaws.com/${encodeURIComponent(key)}`
+    return `https://${this.bucket}.s3.amazonaws.com/${encodeURIComponent(fileName)}`
   }
 }

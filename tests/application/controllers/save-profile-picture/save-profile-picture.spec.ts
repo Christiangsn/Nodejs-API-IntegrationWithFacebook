@@ -52,7 +52,7 @@ describe('SavePictureController', () => {
 
     expect(changeProfilePicture.save).toHaveBeenCalledWith({
       id: userId,
-      file: file.buffer
+      file
     })
     expect(changeProfilePicture.save).toHaveBeenCalledTimes(1)
   })

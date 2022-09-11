@@ -21,7 +21,7 @@ export class ChangeProfilePicture implements IProfilePicture {
     })
 
     if (file !== undefined) {
-      pictureUrl = await this.fileStorage.upload({ file, key })
+      pictureUrl = await this.fileStorage.upload({ file: file.buffer, fileName: `${key}.${file.mimeType.split('/')[1]}` })
     } else {
       // Pegar o name
       name = (await this.profilePicture.load({ id }))?.name
@@ -34,7 +34,7 @@ export class ChangeProfilePicture implements IProfilePicture {
       await this.profilePicture.savePicture(userProfile)
     } catch (err) {
       if (file !== undefined) {
-        await this.fileStorage.delete({ key })
+        await this.fileStorage.delete({ fileName: key })
         // throw err
       }
     }

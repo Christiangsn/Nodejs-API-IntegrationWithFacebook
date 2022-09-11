@@ -39,7 +39,7 @@ describe('AwS3FileStorage', () => {
         }
       }))
 
-      await sut.upload({ key, file })
+      await sut.upload({ fileName: key, file })
 
       expect(putObjectSpy).toHaveBeenCalledWith({
         Bucket: bucket,
@@ -59,7 +59,7 @@ describe('AwS3FileStorage', () => {
           putObject: putObjectSpy
         }
       }))
-      const imageUrl = await sut.upload({ key, file })
+      const imageUrl = await sut.upload({ fileName: key, file })
 
       expect(imageUrl).toBe(`https://${bucket}.s3.amazonaws.com/${key}`)
     })
@@ -72,7 +72,7 @@ describe('AwS3FileStorage', () => {
           putObject: putObjectSpy
         }
       }))
-      const imageUrl = await sut.upload({ key: 'any key', file })
+      const imageUrl = await sut.upload({ fileName: 'any key', file })
 
       expect(imageUrl).toBe(`https://${bucket}.s3.amazonaws.com/any%20key`)
     })
@@ -88,7 +88,7 @@ describe('AwS3FileStorage', () => {
 
       const error = new Error('Error File')
       putObjectPromiseSpy.mockRejectedValueOnce(error)
-      const promise = sut.upload({ key, file })
+      const promise = sut.upload({ fileName: key, file })
 
       expect(promise).rejects.toThrow(error)
     })
@@ -105,7 +105,7 @@ describe('AwS3FileStorage', () => {
     })
 
     it('Should call deleteObject with correct input', async () => {
-      await sut.delete({ key })
+      await sut.delete({ fileName: key })
 
       expect(deleteObjectSpy).toBeCalledWith({
         Bucket: bucket,
@@ -117,7 +117,7 @@ describe('AwS3FileStorage', () => {
     it('Should retrow if deleteObject throws', async () => {
       const error = new Error('Delete Error File')
       deleteObjectPromiseSpy.mockRejectedValueOnce(error)
-      const promise = sut.delete({ key })
+      const promise = sut.delete({ fileName: key })
 
       await expect(promise).rejects.toThrow(error)
     })

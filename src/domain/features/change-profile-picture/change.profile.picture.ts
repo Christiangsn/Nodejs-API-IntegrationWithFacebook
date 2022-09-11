@@ -6,7 +6,10 @@ export interface IProfilePicture {
 export namespace IProfilePicture {
   export type Input = {
     id: string
-    file?: Buffer
+    file?: {
+      buffer: Buffer
+      mimeType: string
+    }
   }
 
   export type Output = { pictureUrl?: string, initials?: string }
