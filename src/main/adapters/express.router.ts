@@ -8,8 +8,8 @@ export class ExpressRouter {
   ) { }
 
   public async adapt (req: Request, res: Response): Promise<void> {
-    const { statusCode, data } = await this.controller.run({ ...req.body })
-    const json = statusCode === 200 ? data : { error: data.message }
+    const { statusCode, data } = await this.controller.run({ ...req.body, ...req.locals })
+    const json = [200, 204].includes(statusCode) ? data : { error: data.message }
     res.status(statusCode).json(json)
   }
 }

@@ -48,7 +48,7 @@ describe('UserAccountRepository', () => {
     })
   })
 
-  describe('savePicture', () => {
+  describe('load', () => {
     it('Should load user profile', async () => {
       const { id } = await userRepository.save({
         email: 'any_email',
@@ -60,6 +60,18 @@ describe('UserAccountRepository', () => {
       })
 
       expect(userProfile?.name).toBe('any_name')
+    })
+
+    it('Should load user profile', async () => {
+      const { id } = await userRepository.save({
+        email: 'any_email'
+      })
+
+      const userProfile = await sut.load({
+        id: id.toString()
+      })
+
+      expect(userProfile?.name).toBeUndefined()
     })
 
     it('Should retunr user profile undefined', async () => {

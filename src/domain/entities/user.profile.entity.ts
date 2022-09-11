@@ -8,7 +8,7 @@ export class UserProfile {
     this.pictureUrl = pictureUrl
 
     // Verificar se o nome é vazio para pegar as iniciais para concatenar
-    if (pictureUrl === undefined && name !== undefined) {
+    if (pictureUrl === undefined && !!name) {
       const firstLetters = name.match(/\b(.)/g) ?? [] // Pegar iniciais de cada palavra
       // Se tiver nome e sobrenome
       if (firstLetters.length > 1) {

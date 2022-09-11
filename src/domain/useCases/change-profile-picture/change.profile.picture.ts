@@ -35,7 +35,7 @@ export class ChangeProfilePicture implements IProfilePicture {
     } catch (err) {
       if (file !== undefined) {
         await this.fileStorage.delete({ fileName: key })
-        // throw err
+        throw err
       }
     }
 

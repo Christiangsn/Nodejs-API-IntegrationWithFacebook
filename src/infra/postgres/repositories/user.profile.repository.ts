@@ -16,10 +16,10 @@ export class UserProfileRepository implements ISaveUserPicture {
   public async load ({ id }: ILoadUserProfile.Input): Promise<ILoadUserProfile.Output> {
     const pgUserRepo = getRepository(UserEntity)
     const user = await pgUserRepo.findOne({ id: Number(id) })
-    return user
-      ? {
-          name: user?.name
-        }
-      : undefined
+    if (user !== undefined) {
+      return {
+        name: user?.name ?? undefined
+      }
+    }
   }
 }

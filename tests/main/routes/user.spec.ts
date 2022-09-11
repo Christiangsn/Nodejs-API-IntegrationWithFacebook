@@ -1,8 +1,12 @@
+import request from 'supertest'
+import { getConnection, getRepository, Repository } from 'typeorm'
+import { IBackup } from 'pg-mem'
+import { sign } from 'jsonwebtoken'
+
+import { env } from '@main/config/env'
 import { UserEntity } from '@infra/postgres/entities'
 import { app } from '@main/start/app'
-import { IBackup } from 'pg-mem'
-import request from 'supertest'
-import { getConnection } from 'typeorm'
+
 import { makeFakeDb } from '../../infra/postgres/mocks'
 
 jest.setTimeout(30000)
@@ -10,10 +14,12 @@ jest.setTimeout(30000)
 describe('User Routes', () => {
   describe('DELETE - /users/picture', () => {
     let backup: IBackup
+    let userRepository: Repository<UserEntity>
 
     beforeAll(async () => {
       const db = await makeFakeDb([UserEntity])
       backup = db.backup() // Trás um ponto de restauração, já que fica armazenada a criação de um usuario
+      userRepository = getRepository(UserEntity)
     })
 
     afterAll(async () => {
@@ -31,6 +37,21 @@ describe('User Routes', () => {
         .send({ token: 'valid_token' })
 
       expect(status).toBe(403)
+    })
+
+    it('Should return 204', async () => {
+      const { id } = await userRepository.save({
+        email: 'any_email'
+      })
+
+      const authorization = sign({ key: id }, env.jwtSecret)
+
+      const { status, body } = await request(app)
+        .delete('/api/users/picture')
+        .set({ authorization })
+
+      expect(status).toBe(204)
+      expect(body).toEqual({})
     })
   })
 })

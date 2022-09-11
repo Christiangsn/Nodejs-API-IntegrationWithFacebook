@@ -11,7 +11,7 @@ describe('ExpressRouter', () => {
   let sut: ExpressRouter
 
   beforeEach(() => {
-    req = getMockReq({ body: { any: 'any' } })
+    req = getMockReq({ body: { anyBody: 'any' }, locals: { anyLocals: 'anyLocals' } })
     res = getMockRes().res
     controller = mock()
     controller.run.mockResolvedValue({
@@ -26,7 +26,7 @@ describe('ExpressRouter', () => {
   it('Should call handle with correct requert', async () => {
     await sut.adapt(req, res)
 
-    expect(controller.run).toHaveBeenCalledWith({ any: 'any' })
+    expect(controller.run).toHaveBeenCalledWith({ anyBody: 'any', anyLocals: 'anyLocals' })
     expect(controller.run).toHaveBeenCalledTimes(1)
   })
 
@@ -61,6 +61,20 @@ describe('ExpressRouter', () => {
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.status).toHaveBeenCalledTimes(1)
     expect(res.json).toHaveBeenCalledWith({ error: 'any error' })
+    expect(res.json).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should respond with 204 and empty data', async () => {
+    const req = getMockReq()
+    controller.run.mockResolvedValueOnce({
+      statusCode: 204,
+      data: null
+    })
+
+    await sut.adapt(req, res)
+    expect(res.status).toHaveBeenCalledWith(204)
+    expect(res.status).toHaveBeenCalledTimes(1)
+    expect(res.json).toHaveBeenCalledWith(null)
     expect(res.json).toHaveBeenCalledTimes(1)
   })
 })
