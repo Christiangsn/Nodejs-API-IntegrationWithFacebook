@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-extraneous-class */
-import { AwS3FileStorage } from '@infra/gateways/aw.s3.fileStorage'
+import { AwsS3FileStorage } from '@infra/gateways/aw.s3.fileStorage'
 import { config, S3 } from 'aws-sdk'
 
 jest.mock('aws-sdk')
@@ -13,10 +13,10 @@ describe('AwS3FileStorage', () => {
   const key = 'any_key'
   const file = Buffer.from('any_buffer')
 
-  let sut: AwS3FileStorage
+  let sut: AwsS3FileStorage
 
   beforeEach(() => {
-    sut = new AwS3FileStorage(acessKey, secret, bucket)
+    sut = new AwsS3FileStorage(acessKey, secret, bucket)
   })
 
   describe('upload', () => {

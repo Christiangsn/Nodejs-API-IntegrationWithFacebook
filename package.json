@@ -14,6 +14,7 @@
     "test:staged": "npm test -- --findRelatedTests",
     "test:coverage": "npm test -- --coverage",
     "test:facebook-api": "npm test -- --c ./jest.integration.config.js ./tests/external/facebook.api.test.ts",
+    "test:s3-amazon": "npm test -- --c ./jest.integration.config.js ./tests/external/aws.s3.file.storage.test.ts",
     "prepare": "husky install",
     "clear_jest": "jest --clearCache"
   },

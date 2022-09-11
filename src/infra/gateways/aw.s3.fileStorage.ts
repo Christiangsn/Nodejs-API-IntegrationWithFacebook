@@ -2,13 +2,14 @@ import { config, S3 } from 'aws-sdk'
 
 import { IDeleteFile, IUploadFile } from '@domain/contracts/gateways/file.storage'
 
-export class AwS3FileStorage implements IUploadFile, IDeleteFile {
+export class AwsS3FileStorage implements IUploadFile, IDeleteFile {
   constructor (
     public acessKey: string,
     public secret: string,
     private readonly bucket: string
   ) {
     config.update({
+      region: 'sa-east-1',
       credentials: {
         accessKeyId: acessKey,
         secretAccessKey: secret
