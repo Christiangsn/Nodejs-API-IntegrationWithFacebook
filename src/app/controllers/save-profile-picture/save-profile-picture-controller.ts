@@ -1,6 +1,6 @@
 import { IHttpResponse } from '@app/helpers/http'
 import { Success } from '@app/helpers/responses'
-import { AllowedMimeTypes, MaxFileSize, Required, RequiredBuffer, Validator } from '@app/validators'
+import { ValidationBuilder as Builder, Validator } from '@app/validators'
 import { IProfilePicture } from '@domain/features/change-profile-picture/change.profile.picture'
 import { Controller } from '../controller'
 
@@ -22,12 +22,7 @@ export class SavePictureController extends Controller {
   }
 
   override builderValidators ({ file }: HttpRequest): Validator[] {
-    return [
-      new Required(file, ''),
-      new RequiredBuffer(file.buffer, 'file'),
-      new AllowedMimeTypes(['jpeg', 'png'], file.mimeType),
-      new MaxFileSize(5, file.buffer)
-    ]
+    return [...Builder.of({ value: file, fieldName: 'file' }).required().image({ allowed: ['png', 'jpg'], maxSizeInMb: 5 }).build()]
   }
 
   public async execute ({ file, userId }: HttpRequest): Promise<IHttpResponse<Model>> {

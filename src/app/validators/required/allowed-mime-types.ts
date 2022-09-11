@@ -1,10 +1,9 @@
 import { InvalidMymeTypeError } from '@app/errors'
-
-type Extension = 'png' | 'jpg' | 'jpeg'
+import { ExtensionTypeImage } from '../contracts/extensions'
 
 export class AllowedMimeTypes {
   constructor (
-    private readonly allowed: Extension[],
+    private readonly allowed: ExtensionTypeImage[],
     private readonly mimeType: string
   ) {}
 
