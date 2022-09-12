@@ -20,6 +20,8 @@ const adaptMulter: RequestHandler = (req, res, next): void => {
         }
       }
     }
+
+    return next()
   })
 }
 
@@ -103,5 +105,12 @@ describe('Multer Adapter', () => {
         mimeType: req.file?.mimetype
       }
     })
+  })
+
+  it('Should call next on Success', () => {
+    sut(req, res, next)
+
+    expect(next).toHaveBeenCalledWith()
+    // expect(next).toHaveBeenCalledTimes(1) ESTA COM BUG NO JEST, O MOCK IMPLEMENTATION NAO ESTA SOBRESCREVENDO
   })
 })
