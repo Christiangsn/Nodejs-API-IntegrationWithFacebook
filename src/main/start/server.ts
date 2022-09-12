@@ -1,9 +1,13 @@
 
-import { app } from './app'
 import { env } from '../config/env'
-import { createConnection } from 'typeorm'
+import { createConnection, getConnectionOptions } from 'typeorm'
 
-createConnection()
-  .then(() => {
+getConnectionOptions()
+  .then(async options => {
+    const root = process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'
+    const entities = [`${root}/infra/postgres/entities/index.{js,ts}`]
+    await createConnection({ ...options, entities })
+    const { app } = await import('./app')
+
     app.listen(env.appPort, () => console.log(`Server running at http://localhost:${env.appPort}`))
-  }).catch(console.error)
+  }).catch((err) => console.error(err))
