@@ -12,24 +12,24 @@ import { makeFakeDb } from '../../infra/postgres/mocks'
 jest.setTimeout(30000)
 
 describe('User Routes', () => {
+  let backup: IBackup
+  let userRepository: Repository<UserEntity>
+
+  beforeAll(async () => {
+    const db = await makeFakeDb([UserEntity])
+    backup = db.backup() // Trás um ponto de restauração, já que fica armazenada a criação de um usuario
+    userRepository = getRepository(UserEntity)
+  })
+
+  afterAll(async () => {
+    await getConnection().close() // TYPEORM desconecta a conexão com o banco ativa
+  })
+
+  beforeEach(() => {
+    backup.restore()
+  })
+
   describe('DELETE - /users/picture', () => {
-    let backup: IBackup
-    let userRepository: Repository<UserEntity>
-
-    beforeAll(async () => {
-      const db = await makeFakeDb([UserEntity])
-      backup = db.backup() // Trás um ponto de restauração, já que fica armazenada a criação de um usuario
-      userRepository = getRepository(UserEntity)
-    })
-
-    afterAll(async () => {
-      await getConnection().close() // TYPEORM desconecta a conexão com o banco ativa
-    })
-
-    beforeEach(() => {
-      backup.restore()
-    })
-
     it('Should return 403 with not authentication', async () => {
       jest.setTimeout(30000)
       const { status } = await request(app)
@@ -53,6 +53,15 @@ describe('User Routes', () => {
 
       expect(status).toBe(200)
       expect(body).toEqual({ initials: 'CS', pictureUrl: undefined })
+    })
+  })
+
+  describe('PUST - /users/picture', () => {
+    it('Should return 403 with not authentication', async () => {
+      const { status } = await request(app)
+        .put('/api/users/picture')
+
+      expect(status).toBe(403)
     })
   })
 })

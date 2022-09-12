@@ -9,4 +9,5 @@ export default (router: Router): void => {
   const adapter = new ExpressRouter(controller)
 
   router.delete('/users/picture', async (req, res, next) => auth.intercept(req, res, next), async (req, res) => adapter.adapt(req, res))
+  router.put('/users/picture', async (req, res, next) => auth.intercept(req, res, next))
 }
