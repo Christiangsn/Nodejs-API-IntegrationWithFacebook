@@ -56,12 +56,36 @@ describe('User Routes', () => {
     })
   })
 
-  describe('PUST - /users/picture', () => {
+  describe('PUT - /users/picture', () => {
+    const uploadSpy = jest.fn()
+
+    jest.mock('@infra/gateways/aw.s3.fileStorage', () => ({
+      AwsS3FileStorage: jest.fn().mockReturnValue({ upload: uploadSpy })
+    }))
+
     it('Should return 403 with not authentication', async () => {
       const { status } = await request(app)
         .put('/api/users/picture')
 
       expect(status).toBe(403)
+    })
+
+    it('Should return 200 with valid data', async () => {
+      uploadSpy.mockResolvedValueOnce('any_url')
+      const { id } = await userRepository.save({
+        email: 'any_email',
+        name: 'Christian Guimaraes dos santos'
+      })
+
+      const authorization = sign({ key: id }, env.jwtSecret)
+
+      const { status, body } = await request(app)
+        .put('/api/users/picture')
+        .set({ authorization })
+        .attach('picture', Buffer.from('any_buffer'), { filename: 'any_name', contentType: 'image/png' })
+
+      expect(status).toBe(200)
+      expect(body).toEqual({ initials: undefined, pictureUrl: 'any_url' })
     })
   })
 })
